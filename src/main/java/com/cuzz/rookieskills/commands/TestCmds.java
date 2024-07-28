@@ -1,5 +1,6 @@
 package com.cuzz.rookieskills.commands;
 
+import com.cuzz.rookieskills.RookieSkills;
 import io.lumine.mythic.api.skills.Skill;
 import io.lumine.mythic.api.skills.SkillCaster;
 import io.lumine.mythic.api.skills.SkillTrigger;
@@ -11,11 +12,15 @@ import io.lumine.mythic.core.skills.SkillTriggers;
 import io.lumine.mythic.core.utils.MythicUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,6 +84,16 @@ public class TestCmds implements TabExecutor {
                 player.sendMessage(args[1]);
                 MythicBukkit.inst().getAPIHelper().castSkill( (Entity)sender, args[1]);
                 return true;
+            }
+            if(args[0].equalsIgnoreCase("addPDC")) {
+                ItemStack item = player.getInventory().getItemInMainHand();
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null) {
+                    PersistentDataContainer PDC = meta.getPersistentDataContainer();
+                    PDC.set(new NamespacedKey(RookieSkills.getInstance(),"hasSkill"), PersistentDataType.STRING,"TestSkill1");
+                    item.setItemMeta(meta);
+                    player.sendMessage("添加成功!");
+                }
             }
         }
         return true;
