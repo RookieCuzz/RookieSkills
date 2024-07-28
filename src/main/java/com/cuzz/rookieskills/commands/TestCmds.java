@@ -1,15 +1,20 @@
 package com.cuzz.rookieskills.commands;
 
 import com.cuzz.rookieskills.RookieSkills;
-import io.lumine.mythic.api.skills.Skill;
-import io.lumine.mythic.api.skills.SkillCaster;
-import io.lumine.mythic.api.skills.SkillTrigger;
+import com.google.common.collect.ImmutableMap;
+import io.lumine.mythic.api.adapters.AbstractEntity;
+import io.lumine.mythic.api.skills.*;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.bukkit.adapters.BukkitEntity;
 import io.lumine.mythic.bukkit.adapters.BukkitPlayer;
 import io.lumine.mythic.core.players.PlayerData;
 import io.lumine.mythic.core.skills.SkillExecutor;
+import io.lumine.mythic.core.skills.SkillMetadataImpl;
 import io.lumine.mythic.core.skills.SkillTriggers;
+import io.lumine.mythic.core.skills.variables.Variable;
+import io.lumine.mythic.core.skills.variables.VariableRegistry;
 import io.lumine.mythic.core.utils.MythicUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -26,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
+import io.lumine.mythic.core.skills.placeholders.Placeholder;
 public class TestCmds implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -50,17 +55,41 @@ public class TestCmds implements TabExecutor {
 
         return closestGolem;
     }
-    private Collection<IronGolem> findNearbyIronGolems(Player player, int radius) {
-        Collection<IronGolem> golems = new ArrayList<>();
+    private Collection<AbstractEntity> findNearbyIronGolems(Player player, int radius) {
+        Collection<AbstractEntity> golems = new ArrayList<>();
 
         for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
             if (entity.getType() == EntityType.IRON_GOLEM) {
-                golems.add((IronGolem) entity);
+                golems.add(new BukkitEntity(entity));
             }
         }
-
         return golems;
     }
+
+    public void applySkillTransformation(SkillMetadata metadata) {
+        // 对技能元数据进行转换或处理
+        SkillCaster caster = metadata.getCaster();
+        Collection<AbstractEntity> entityTargets = metadata.getEntityTargets();
+
+        String name = caster.getName();
+        Bukkit.getPlayer(name).sendMessage("BEFORE目标数量"+entityTargets.size());
+        System.out.println("caster是"+name);
+        Collection<AbstractEntity> nearbyIronGolems = findNearbyIronGolems(Bukkit.getPlayer(name), 5);
+        Bukkit.getPlayer(name).sendMessage("铁傀儡数量"+nearbyIronGolems.size());
+        metadata.setEntityTargets(nearbyIronGolems);
+        System.out.println("对技能进行修正");
+        Collection<AbstractEntity> entityTargets2 = metadata.getEntityTargets();
+        Bukkit.getPlayer(name).sendMessage("AFTER目标数量"+entityTargets2.size());
+        VariableRegistry variables = metadata.getVariables();
+        ImmutableMap<String, Variable> map = variables.asMap();
+        System.out.println(variables.asMap().size());
+        for (String str:map.keySet()){
+            Bukkit.getPlayer(name).sendMessage("key "+str);
+        }
+        // 其它操作...
+    }
+
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.isOp()) {
@@ -71,14 +100,16 @@ public class TestCmds implements TabExecutor {
             if(args[0].equalsIgnoreCase("test")){
                 player.sendMessage("进行测试！");
                 final SkillExecutor skillManager = MythicBukkit.inst().getSkillManager();
-                String skillName="SmashAttack";
-                Optional<Skill> opt = skillManager.getSkill(skillName);
-                Skill skill = opt.get();
-                SkillTrigger skillTrigger=SkillTriggers.API;
-                PlayerData playerData=new PlayerData(player.getUniqueId(),player.getName());
+                String skillName="TestSkill";
+                SkillTrigger skillTrigger = SkillTrigger.get("onUse");
+                PlayerData playerData = new PlayerData();
                 playerData.initialize(new BukkitPlayer(player));
-                IronGolem nearestIronGolem = findNearestIronGolem(player);
 
+                MythicBukkit.inst().getAPIHelper().castSkill((Entity) sender,skillName,this::applySkillTransformation);
+                Optional<Skill> skill = skillManager.getSkill(skillName);
+                Skill skill1 = skill.get();
+
+                Collection<SkillHolder> parents = skill1.getParents();
             }
             if (args[0].equalsIgnoreCase("Test2")){
                 player.sendMessage(args[1]);
