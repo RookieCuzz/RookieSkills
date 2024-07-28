@@ -2,6 +2,8 @@ package com.cuzz.rookieskills;
 
 import com.cuzz.rookieskills.commands.TestCmds;
 import com.cuzz.rookieskills.listeners.MythicMobsListener;
+
+import com.cuzz.rookieskills.listeners.ItemClickListener;
 import com.cuzz.rookieskills.listeners.PlayerListener;
 import com.cuzz.rookieskills.manager.RpgPlayerDataManager;
 import io.lumine.mythic.api.adapters.AbstractEntity;
@@ -37,9 +39,9 @@ public final class RookieSkills extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(),this);
         getServer().getPluginManager().registerEvents(new MythicMobsListener(),this);
         registerPlaceholders();
+
         getServer().getPluginManager().registerEvents(new ItemClickListener(), this);
 
->>>>>>> f84a70e6cfd87735c19887719efe69b74202b8fd
         // 创建异步定时任务
         new BukkitRunnable() {
             @Override
