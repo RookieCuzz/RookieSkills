@@ -10,7 +10,7 @@ import org.checkerframework.common.value.qual.ArrayLenRange;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Mana {
-    private Integer BaseMana;
-    private Integer extraMana;
-    private Float regenSpeed;
+    private Double BaseMana;
+    private Double maxMana;
+    private Double regenSpeed;
 }

@@ -4,11 +4,12 @@ import com.cuzz.rookieskills.bean.player.RpgPlayerData;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RpgPlayerDataManager {
 
 
-    private HashMap<Player, RpgPlayerData> RpgPlayerDataList=new HashMap<>();
+    private ConcurrentHashMap<Player, RpgPlayerData> RpgPlayerDataList=new ConcurrentHashMap<>();
 
     private static RpgPlayerDataManager singleton;
     private RpgPlayerDataManager(){
