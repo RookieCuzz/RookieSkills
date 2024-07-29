@@ -6,6 +6,7 @@ import com.cuzz.rookieskills.listeners.MythicMobsListener;
 import com.cuzz.rookieskills.listeners.ItemClickListener;
 import com.cuzz.rookieskills.listeners.PlayerListener;
 import com.cuzz.rookieskills.manager.RpgPlayerDataManager;
+import com.cuzz.rookieskills.mythicmobs.placeholders.TestMMPapi;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.skills.placeholders.Placeholder;
@@ -38,7 +39,7 @@ public final class RookieSkills extends JavaPlugin {
         // 注册监听器
         getServer().getPluginManager().registerEvents(new PlayerListener(),this);
         getServer().getPluginManager().registerEvents(new MythicMobsListener(),this);
-        registerPlaceholders();
+        TestMMPapi.registerPlaceholders();
 
         getServer().getPluginManager().registerEvents(new ItemClickListener(), this);
 
@@ -55,20 +56,7 @@ public final class RookieSkills extends JavaPlugin {
         }.runTaskTimerAsynchronously(this, 0, 20 * 600); // 每 600 秒清理一次（20 ticks * 60 seconds）
     }
 
-    public void registerPlaceholders(){
-        // Power placeholder
-        register("rookie.damage", Placeholder.meta((meta, arg) -> {
-            AbstractEntity entity = meta.getCaster().getEntity();
-            String name = meta.getCaster().getName();
-            System.out.println("触发者"+name);
-            System.out.println("我被触发咯");
-                return Double.toString(20);
-        }));
-    }
-    private static void register(String placeholder, Placeholder function)
-    {
-        MythicBukkit.inst().getPlaceholderManager().register(placeholder, function);
-    }
+
 
     @Override
     public void onDisable() {
