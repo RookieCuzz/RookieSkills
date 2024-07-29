@@ -1,23 +1,29 @@
+# 技能名字
 name: Blizzard
+# MM技能ID
+id: Blizzard
+# 技能图标(映射)
+symbol: "劒"
+# 技能各项参数
 modifier:
-  duration:
-    name: Duration
-    default-value: 2.5
-  damage:
-    name: Damage
-    default-value: 2.0
-  mana:
-    name: Mana
-    default-value: 0.0
-  stamina:
-    name: Stamina
-    default-value: 0.0
-  cooldown:
+  cooldown: # 冷却时间
     name: Cooldown
     default-value: 10.0
-  timer:
-    name: Timer
+  damage: # 伤害
+    name: Damage
+    default-value: 2.0
+  mana: # 消耗蓝量
+    name: Mana
     default-value: 0.0
-  radius:
+  stamina: # 消耗体力值
+    name: Stamina
+    default-value: 0.0
+  radius: # 范围
     name: Radius
     default-value: 1.0
+  duration: # 药水的持续时间
+    name: Duration
+    default-value: 2.5
+  timer: # 执行周期
+    name: Timer
+    default-value: 0.0

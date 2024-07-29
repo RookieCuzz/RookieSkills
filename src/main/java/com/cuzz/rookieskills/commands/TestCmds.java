@@ -31,14 +31,28 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import io.lumine.mythic.core.skills.placeholders.Placeholder;
+
 public class TestCmds implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return new ArrayList<String>() {{
-            add("Test2");
-        }};
+        if (args.length == 1) {
+            return new ArrayList<String>() {
+                {
+                    add("test");
+                    add("Test2");
+                    add("addSkill");
+                }
+            };
+        } else if (args.length == 2 && args[0].equals("addSkill")) {
+            return new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet());
+        } else {
+            return (List) Bukkit.getServer().getOnlinePlayers().parallelStream().map(Player::getName).collect(Collectors.toList());
+        }
     }
+
     private IronGolem findNearestIronGolem(Player player) {
         double closestDistance = Double.MAX_VALUE;
         IronGolem closestGolem = null;
@@ -55,6 +69,7 @@ public class TestCmds implements TabExecutor {
 
         return closestGolem;
     }
+
     private Collection<AbstractEntity> findNearbyIronGolems(Player player, int radius) {
         Collection<AbstractEntity> golems = new ArrayList<>();
 
@@ -72,19 +87,19 @@ public class TestCmds implements TabExecutor {
         Collection<AbstractEntity> entityTargets = metadata.getEntityTargets();
 
         String name = caster.getName();
-        Bukkit.getPlayer(name).sendMessage("BEFORE目标数量"+entityTargets.size());
-        System.out.println("caster是"+name);
+        Bukkit.getPlayer(name).sendMessage("BEFORE目标数量" + entityTargets.size());
+        System.out.println("caster是" + name);
         Collection<AbstractEntity> nearbyIronGolems = findNearbyIronGolems(Bukkit.getPlayer(name), 5);
-        Bukkit.getPlayer(name).sendMessage("铁傀儡数量"+nearbyIronGolems.size());
+        Bukkit.getPlayer(name).sendMessage("铁傀儡数量" + nearbyIronGolems.size());
         metadata.setEntityTargets(nearbyIronGolems);
         System.out.println("对技能进行修正");
         Collection<AbstractEntity> entityTargets2 = metadata.getEntityTargets();
-        Bukkit.getPlayer(name).sendMessage("AFTER目标数量"+entityTargets2.size());
+        Bukkit.getPlayer(name).sendMessage("AFTER目标数量" + entityTargets2.size());
         VariableRegistry variables = metadata.getVariables();
         ImmutableMap<String, Variable> map = variables.asMap();
         System.out.println(variables.asMap().size());
-        for (String str:map.keySet()){
-            Bukkit.getPlayer(name).sendMessage("key "+str);
+        for (String str : map.keySet()) {
+            Bukkit.getPlayer(name).sendMessage("key " + str);
         }
         // 其它操作...
     }
@@ -97,33 +112,33 @@ public class TestCmds implements TabExecutor {
         }
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            if(args[0].equalsIgnoreCase("test")){
+            if (args[0].equalsIgnoreCase("test")) {
                 player.sendMessage("进行测试！");
                 final SkillExecutor skillManager = MythicBukkit.inst().getSkillManager();
-                String skillName="TestSkill";
+                String skillName = "TestSkill";
                 SkillTrigger skillTrigger = SkillTrigger.get("onUse");
                 PlayerData playerData = new PlayerData();
                 playerData.initialize(new BukkitPlayer(player));
 
-                MythicBukkit.inst().getAPIHelper().castSkill((Entity) sender,skillName,this::applySkillTransformation);
+                MythicBukkit.inst().getAPIHelper().castSkill((Entity) sender, skillName, this::applySkillTransformation);
                 Optional<Skill> skill = skillManager.getSkill(skillName);
                 Skill skill1 = skill.get();
 
                 Collection<SkillHolder> parents = skill1.getParents();
             }
-            if (args[0].equalsIgnoreCase("Test2")){
+            if (args[0].equalsIgnoreCase("Test2")) {
                 player.sendMessage(args[1]);
-                MythicBukkit.inst().getAPIHelper().castSkill( (Entity)sender, args[1]);
+                MythicBukkit.inst().getAPIHelper().castSkill((Entity) sender, args[1]);
                 return true;
             }
-            if(args[0].equalsIgnoreCase("addPDC")) {
+            if (args[0].equalsIgnoreCase("addSkill")) {
                 ItemStack item = player.getInventory().getItemInMainHand();
                 ItemMeta meta = item.getItemMeta();
                 if (meta != null) {
                     PersistentDataContainer PDC = meta.getPersistentDataContainer();
-                    PDC.set(new NamespacedKey(RookieSkills.getInstance(),"hasSkill"), PersistentDataType.STRING,"TestSkill1");
+                    PDC.set(new NamespacedKey(RookieSkills.getInstance(), "hasSkill"), PersistentDataType.STRING, args[1]);
                     item.setItemMeta(meta);
-                    player.sendMessage("添加成功!");
+                    player.sendMessage("添加成功!已为手上物品添加技能: " + args[1]);
                 }
             }
         }
