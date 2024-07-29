@@ -1,8 +1,17 @@
+com\cuzz\rookieskills\bean\stats\Mana.class
+com\cuzz\rookieskills\listeners\ItemClickListener.class
 com\cuzz\rookieskills\mythicmobs\targeters\TestTarget.class
+com\cuzz\rookieskills\bean\skill\Skill.class
 com\cuzz\rookieskills\listeners\MythicMobsListener.class
 com\cuzz\rookieskills\RookieSkills.class
 com\cuzz\rookieskills\commands\TestCmds$1.class
+com\cuzz\rookieskills\manager\SkillConfigManager.class
+com\cuzz\rookieskills\listeners\PlayerListener.class
+com\cuzz\rookieskills\RookieSkills$1.class
+com\cuzz\rookieskills\bean\skill\Skill$SkillBuilder.class
 com\cuzz\rookieskills\mythicmobs\placeholders\TestMMPapi.class
 com\cuzz\rookieskills\mythicmobs\mechanics\TestMechanic.class
+com\cuzz\rookieskills\bean\player\RpgPlayerData.class
 com\cuzz\rookieskills\bean\TriggerType.class
+com\cuzz\rookieskills\manager\RpgPlayerDataManager.class
 com\cuzz\rookieskills\commands\TestCmds.class

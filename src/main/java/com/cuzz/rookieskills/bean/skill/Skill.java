@@ -27,8 +27,4 @@ public class Skill {
     private Double durationValue;
     private String timerDisplayName;
     private Double timerValue;
-
-    public Skill() {
-    }
-
 }
