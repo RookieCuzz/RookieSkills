@@ -1,8 +1,11 @@
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\bean\stats\Mana.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\manager\RpgPlayerDataManager.java
+D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\bean\TriggerType.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\listeners\MythicMobsListener.java
+D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\mythicmobs\targeters\TestTarget.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\commands\TestCmds.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\listeners\PlayerListener.java
+D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\mythicmobs\placeholders\TestMMPapi.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\mythicmobs\mechanics\TestMechanic.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\listeners\ItemClickListener.java
 D:\mymc\RookieSkills\src\main\java\com\cuzz\rookieskills\RookieSkills.java
