@@ -13,7 +13,7 @@ public class TestMechanic implements ITargetedEntitySkill {
     String aMessage;
 
     public TestMechanic(MythicLineConfig config) {
-        this.aMessage = config.getString(   new String[]{"ew"}, null);
+        this.aMessage = config.getString(   new String[]{"test_message"}, null);
         System.out.println("消息是: " +this.aMessage);
     }
     @Override
