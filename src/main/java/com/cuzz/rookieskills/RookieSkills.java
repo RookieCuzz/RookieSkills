@@ -6,6 +6,7 @@ import com.cuzz.rookieskills.listeners.MythicMobsListener;
 import com.cuzz.rookieskills.listeners.ItemClickListener;
 import com.cuzz.rookieskills.listeners.PlayerListener;
 import com.cuzz.rookieskills.manager.RpgPlayerDataManager;
+import com.cuzz.rookieskills.manager.SkillConfigManager;
 import com.cuzz.rookieskills.mythicmobs.placeholders.TestMMPapi;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.bukkit.MythicBukkit;
@@ -19,26 +20,29 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
+
 public final class RookieSkills extends JavaPlugin {
 
+    @Getter
     private static RookieSkills instance;
     @Getter
     private RpgPlayerDataManager rpgPlayerDataManager;
-    public static RookieSkills getInstance() {
-        return instance;
-    }
+    @Getter
+    private SkillConfigManager skillConfigManager;
 
 
     @Override
     public void onEnable() {
-        instance=this;
-        this.rpgPlayerDataManager=RpgPlayerDataManager.getInstance();
+        instance = this;
+        this.rpgPlayerDataManager = RpgPlayerDataManager.getInstance();
+        this.skillConfigManager = SkillConfigManager.getInstance();
         // Plugin startup logic
-        this.getCommand("rsk").setExecutor((CommandExecutor)new TestCmds());
+        this.getCommand("rsk").setExecutor((CommandExecutor) new TestCmds());
 
         // 注册监听器
-        getServer().getPluginManager().registerEvents(new PlayerListener(),this);
-        getServer().getPluginManager().registerEvents(new MythicMobsListener(),this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        getServer().getPluginManager().registerEvents(new MythicMobsListener(), this);
         TestMMPapi.registerPlaceholders();
 
         getServer().getPluginManager().registerEvents(new ItemClickListener(), this);
@@ -54,13 +58,14 @@ public final class RookieSkills extends JavaPlugin {
                 }
             }
         }.runTaskTimerAsynchronously(this, 0, 20 * 600); // 每 600 秒清理一次（20 ticks * 60 seconds）
-    }
 
+        skillConfigManager.loadSkills();
+    }
 
 
     @Override
     public void onDisable() {
-        rpgPlayerDataManager=null;
+        rpgPlayerDataManager = null;
         // Plugin shutdown logic
     }
 }

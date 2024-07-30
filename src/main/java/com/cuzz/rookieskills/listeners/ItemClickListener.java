@@ -13,6 +13,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
+
 public class ItemClickListener implements Listener {
     @EventHandler
     public void onRightClick(PlayerInteractEvent event) {
@@ -22,20 +24,18 @@ public class ItemClickListener implements Listener {
             ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
             ItemMeta meta = item.getItemMeta();
 
-            if (item.getType() == Material.DIAMOND_SWORD) {
-
+//            if (item.getType() == Material.DIAMOND_SWORD) {
                 if (meta != null) {
                     PersistentDataContainer PDC = meta.getPersistentDataContainer();
-
-                    if (PDC.has(new NamespacedKey(RookieSkills.getInstance(),"hasSkill"), PersistentDataType.STRING)) {
-                        if (PDC.get(new NamespacedKey(RookieSkills.getInstance(),"hasSkill"), PersistentDataType.STRING).equalsIgnoreCase("TestSkill1")) {
-                            MythicBukkit.inst().getAPIHelper().castSkill(event.getPlayer(), "SmashAttack");
+                    if (PDC.has(new NamespacedKey(RookieSkills.getInstance(), "hasSkill"), PersistentDataType.STRING)) {
+                        for (String skillName : new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet())) {
+                            if (PDC.get(new NamespacedKey(RookieSkills.getInstance(), "hasSkill"), PersistentDataType.STRING).equalsIgnoreCase(skillName)) {
+                                MythicBukkit.inst().getAPIHelper().castSkill(event.getPlayer(), RookieSkills.getInstance().getSkillConfigManager().getSkillList().get(skillName).getId());
+                            }
                         }
                     }
                 }
-
-
-            }
+//            }
         }
     }
 }
