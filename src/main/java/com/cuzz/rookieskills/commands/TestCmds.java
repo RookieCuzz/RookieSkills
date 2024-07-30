@@ -1,6 +1,7 @@
 package com.cuzz.rookieskills.commands;
 
 import com.cuzz.rookieskills.RookieSkills;
+import com.cuzz.rookieskills.bean.TriggerType;
 import com.cuzz.rookieskills.manager.SkillConfigManager;
 import com.google.common.collect.ImmutableMap;
 import io.lumine.mythic.api.adapters.AbstractEntity;
@@ -47,6 +48,8 @@ public class TestCmds implements TabExecutor {
             };
         } else if (args.length == 2 && args[0].equals("addSkill")) {
             return new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet());
+        } else if (args.length == 3 && args[0].equals("addSkill")) {
+            return Arrays.stream(TriggerType.values()).parallel().map(Enum::name).collect(Collectors.toList());
         } else {
             return (List) Bukkit.getServer().getOnlinePlayers().parallelStream().map(Player::getName).collect(Collectors.toList());
         }
@@ -131,40 +134,58 @@ public class TestCmds implements TabExecutor {
                 return true;
             }
             if (args[0].equalsIgnoreCase("addSkill")) {
-                ItemStack item = player.getInventory().getItemInMainHand();
-                ItemMeta meta = item.getItemMeta();
+
+                if (args[2] != null) {
+
+                    ItemStack item = player.getInventory().getItemInMainHand();
+                    ItemMeta meta = item.getItemMeta();
+
+                    if (meta != null) {
 
 
-                if (meta != null) {
+                        com.cuzz.rookieskills.bean.skill.Skill skill = SkillConfigManager.getInstance().getSkillList().get(args[1]);
 
-                    com.cuzz.rookieskills.bean.skill.Skill skill = SkillConfigManager.getInstance().getSkillList().get(args[1]);
+                        // 主键
+                        NamespacedKey skillListKey = new NamespacedKey(RookieSkills.getInstance(), "skillList");
 
-                    // 主键
-                    NamespacedKey hasSkillKey = new NamespacedKey(RookieSkills.getInstance(), "hasSkill");
+                        // 主容器
+                        PersistentDataContainer skillList = meta.getPersistentDataContainer();
 
-                    // 主容器
-                    PersistentDataContainer hasSkill = meta.getPersistentDataContainer();
+                        // 子容器
+                        PersistentDataContainer skillInfo;
+                        if (skillList.has(skillListKey, PersistentDataType.TAG_CONTAINER)) {
+                            skillInfo = skillList.get(skillListKey, PersistentDataType.TAG_CONTAINER);
+                        } else {
+                            skillInfo = skillList.getAdapterContext().newPersistentDataContainer();
+                        }
 
-                    // 子容器
-                    PersistentDataContainer skillInfoContainer = hasSkill.getAdapterContext().newPersistentDataContainer();
+                        // 存储技能的信息
+                        PersistentDataContainer skillData = skillInfo.getAdapterContext().newPersistentDataContainer();
 
-                    // 存储技能的信息
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING, skill.getName());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE, skill.getCooldownValue());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE, skill.getDamageValue());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE, skill.getManaValue());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE, skill.getStaminaValue());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE, skill.getRadiusValue());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE, skill.getDurationValue());
-                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE, skill.getTimerValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING, skill.getName());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillTriggerType"), PersistentDataType.STRING, args[2]);
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE, skill.getCooldownValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE, skill.getDamageValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE, skill.getManaValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE, skill.getStaminaValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE, skill.getRadiusValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE, skill.getDurationValue());
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE, skill.getTimerValue());
 
-                    // 将子容器再装入主容器
-                    hasSkill.set(hasSkillKey, PersistentDataType.TAG_CONTAINER, skillInfoContainer);
+                        skillInfo.set(new NamespacedKey(RookieSkills.getInstance(), skill.getId()), PersistentDataType.TAG_CONTAINER, skillData);
 
-                    // 将元数据应用回物品
-                    item.setItemMeta(meta);
 
-                    player.sendMessage("添加成功!已为手上物品添加技能: " + args[1]);
+                        // 将子容器再装入主容器
+                        skillList.set(skillListKey, PersistentDataType.TAG_CONTAINER, skillInfo);
+
+                        // 将元数据应用回物品
+                        item.setItemMeta(meta);
+
+                        player.sendMessage("添加成功!已为手上物品添加技能: " + args[1] + "触发方式为: " + args[2]);
+
+                    }
+                } else {
+                    player.sendMessage("请输入触发方式");
                 }
             }
         }

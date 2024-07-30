@@ -26,42 +26,46 @@ public class ItemClickListener implements Listener {
             ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
 //            if (item.getType() == Material.DIAMOND_SWORD) {
-                if (meta != null) {
+            if (meta != null) {
+                PersistentDataContainer skillList = meta.getPersistentDataContainer();
 
-                    PersistentDataContainer PDC = meta.getPersistentDataContainer();
+                if (skillList.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
+                    PersistentDataContainer skillInfo = skillList.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
 
-                    NamespacedKey hasSkillKey = new NamespacedKey(RookieSkills.getInstance(), "hasSkill");
+                    for (String skillId : new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet())) {
 
-                    if (PDC.has(hasSkillKey, PersistentDataType.TAG_CONTAINER)) {
-                        PersistentDataContainer skillInfoContainer = PDC.get(hasSkillKey, PersistentDataType.TAG_CONTAINER);
+                        if (skillInfo.has(new NamespacedKey(RookieSkills.getInstance(), skillId), PersistentDataType.TAG_CONTAINER)) {
+                            PersistentDataContainer skillData = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), skillId), PersistentDataType.TAG_CONTAINER);
 
-                        for (String skillName : new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet())) {
-                            if (skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING).equalsIgnoreCase(skillName)) {
-                                MythicBukkit.inst().getAPIHelper().castSkill(event.getPlayer(), RookieSkills.getInstance().getSkillConfigManager().getSkillList().get(skillName).getId());
+//                            if (skillData.get(new NamespacedKey(RookieSkills.getInstance(), skillId), PersistentDataType.STRING).equalsIgnoreCase(skillId)) {
+                            MythicBukkit.inst().getAPIHelper().castSkill(event.getPlayer(), RookieSkills.getInstance().getSkillConfigManager().getSkillList().get(skillId).getId());
 
-                                String name = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING);
-                                Double skillCooldownValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE);
-                                Double skillDamageValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE);
-                                Double skillManaValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE);
-                                Double skillStaminaValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE);
-                                Double skillRadiusValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE);
-                                Double skillDurationValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE);
-                                Double skillTimerValue = skillInfoContainer.get(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE);
+                            String name = RookieSkills.getInstance().getSkillConfigManager().getSkillList().get(skillId).getName();
+                            Double skillCooldownValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE);
+                            Double skillDamageValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE);
+                            Double skillManaValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE);
+                            Double skillStaminaValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE);
+                            Double skillRadiusValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE);
+                            Double skillDurationValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE);
+                            Double skillTimerValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE);
 
-                                event.getPlayer().sendMessage("释放的技能名字为: " + name);
-                                event.getPlayer().sendMessage("技能的冷却为: " + skillCooldownValue);
-                                event.getPlayer().sendMessage("技能的伤害为: " + skillDamageValue);
-                                event.getPlayer().sendMessage("技能的耗蓝为: " + skillManaValue);
-                                event.getPlayer().sendMessage("技能的耗体为: " + skillStaminaValue);
-                                event.getPlayer().sendMessage("技能的范围为: " + skillRadiusValue);
-                                event.getPlayer().sendMessage("技能的持续时间为: " + skillDurationValue);
-                                event.getPlayer().sendMessage("技能的循环触发为: " + skillTimerValue);
-                            }
+                            event.getPlayer().sendMessage("释放的技能名字为: " + name);
+                            event.getPlayer().sendMessage("技能的冷却为: " + skillCooldownValue);
+                            event.getPlayer().sendMessage("技能的伤害为: " + skillDamageValue);
+                            event.getPlayer().sendMessage("技能的耗蓝为: " + skillManaValue);
+                            event.getPlayer().sendMessage("技能的耗体为: " + skillStaminaValue);
+                            event.getPlayer().sendMessage("技能的范围为: " + skillRadiusValue);
+                            event.getPlayer().sendMessage("技能的持续时间为: " + skillDurationValue);
+                            event.getPlayer().sendMessage("技能的循环触发为: " + skillTimerValue);
+//                            }
                         }
+
 
                     }
 
                 }
+
+            }
 //            }
         }
     }

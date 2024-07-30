@@ -59,7 +59,7 @@ public class SkillConfigManager {
                         .timerValue(skillConfig.getDouble("modifier.timer.default-value"))
                         .build();
 
-                SkillList.put(skillConfig.getString("name"), skill);
+                SkillList.put(skillConfig.getString("id"), skill);
             }
         }
     }
