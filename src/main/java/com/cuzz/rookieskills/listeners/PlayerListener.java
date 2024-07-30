@@ -53,14 +53,14 @@ public class PlayerListener implements Listener {
             if (newItem != null && newItem.getType() == Material.NETHER_STAR) {
                 skillModeList.add(player);
                 SkillTable skillTable = new SkillTable();
-                skillTable.setSkillLoc(1,"Test1");
-                skillTable.setSkillLoc(2,"Test2");
-                skillTable.setSkillLoc(3,"Test3");
-                skillTable.setSkillLoc(4,"Test4");
-                skillTable.setSkillLoc(6,"Test6");
-                skillTable.setSkillLoc(7,"Test7");
-                skillTable.setSkillLoc(8,"Test8");
-                skillTable.setSkillLoc(9,"Test9");
+                skillTable.setSkillLoc(1,"Vault");
+                skillTable.setSkillLoc(2,"Gale_Slash");
+                skillTable.setSkillLoc(3,"Torrent_DOUBLE");
+                skillTable.setSkillLoc(4,"Cloudpiercer");
+                skillTable.setSkillLoc(6,"Windbound_Fury");
+                skillTable.setSkillLoc(7,"Arcane_Blast");
+                skillTable.setSkillLoc(8,"Flamethrower");
+                skillTable.setSkillLoc(9,"Arcane_Turret_SKILL");
                 skillTable.setOwner(player);
                 SkillTableManager.PlayersSkillList.put(player,skillTable);
                 player.sendMessage("您已进入技能模式");
@@ -79,7 +79,7 @@ public class PlayerListener implements Listener {
         }else if (previousSlot==4&&skillModeList.contains(player)){
             event.setCancelled(true);
             SkillTable skillTable = SkillTableManager.PlayersSkillList.get(player);
-            String skillName = skillTable.getSkillByLoc(previousSlot);
+            String skillName = skillTable.getSkillByLoc(newSlot+1);
             if(skillName!=null){
                 MythicBukkit.inst().getAPIHelper().castSkill( player, skillName);
             }
