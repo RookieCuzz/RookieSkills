@@ -1,6 +1,7 @@
 package com.cuzz.rookieskills.commands;
 
 import com.cuzz.rookieskills.RookieSkills;
+import com.cuzz.rookieskills.manager.SkillConfigManager;
 import com.google.common.collect.ImmutableMap;
 import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.skills.*;
@@ -27,13 +28,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import io.lumine.mythic.core.skills.placeholders.Placeholder;
+import org.bukkit.plugin.Plugin;
 
 public class TestCmds implements TabExecutor {
     @Override
@@ -134,10 +133,37 @@ public class TestCmds implements TabExecutor {
             if (args[0].equalsIgnoreCase("addSkill")) {
                 ItemStack item = player.getInventory().getItemInMainHand();
                 ItemMeta meta = item.getItemMeta();
+
+
                 if (meta != null) {
-                    PersistentDataContainer PDC = meta.getPersistentDataContainer();
-                    PDC.set(new NamespacedKey(RookieSkills.getInstance(), "hasSkill"), PersistentDataType.STRING, args[1]);
+
+                    com.cuzz.rookieskills.bean.skill.Skill skill = SkillConfigManager.getInstance().getSkillList().get(args[1]);
+
+                    // 主键
+                    NamespacedKey hasSkillKey = new NamespacedKey(RookieSkills.getInstance(), "hasSkill");
+
+                    // 主容器
+                    PersistentDataContainer hasSkill = meta.getPersistentDataContainer();
+
+                    // 子容器
+                    PersistentDataContainer skillInfoContainer = hasSkill.getAdapterContext().newPersistentDataContainer();
+
+                    // 存储技能的信息
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING, skill.getName());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE, skill.getCooldownValue());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE, skill.getDamageValue());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE, skill.getManaValue());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE, skill.getStaminaValue());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE, skill.getRadiusValue());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE, skill.getDurationValue());
+                    skillInfoContainer.set(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE, skill.getTimerValue());
+
+                    // 将子容器再装入主容器
+                    hasSkill.set(hasSkillKey, PersistentDataType.TAG_CONTAINER, skillInfoContainer);
+
+                    // 将元数据应用回物品
                     item.setItemMeta(meta);
+
                     player.sendMessage("添加成功!已为手上物品添加技能: " + args[1]);
                 }
             }
