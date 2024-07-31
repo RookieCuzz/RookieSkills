@@ -54,6 +54,17 @@ public class ItemSkillListener implements Listener {
         }
     }
 
+//    public boolean isCoolDown(Player player,String skillId){
+//
+//    }
+
+    /**
+     *
+     * @param meta 物品元数据
+     * @param type  触发类型
+     * @return
+     */
+
     public Boolean checkItemSkillTriggerType(ItemMeta meta, TriggerType type) {
         if (meta != null) {
             PersistentDataContainer skillList = meta.getPersistentDataContainer();
