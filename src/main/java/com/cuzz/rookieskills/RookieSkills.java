@@ -3,24 +3,16 @@ package com.cuzz.rookieskills;
 import com.cuzz.rookieskills.commands.TestCmds;
 import com.cuzz.rookieskills.listeners.MythicMobsListener;
 
-import com.cuzz.rookieskills.listeners.ItemClickListener;
+import com.cuzz.rookieskills.listeners.ItemSkillListener;
 import com.cuzz.rookieskills.listeners.PlayerListener;
 import com.cuzz.rookieskills.manager.RpgPlayerDataManager;
 import com.cuzz.rookieskills.manager.SkillConfigManager;
 import com.cuzz.rookieskills.mythicmobs.placeholders.TestMMPapi;
-import io.lumine.mythic.api.adapters.AbstractEntity;
-import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.skills.placeholders.Placeholder;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.HashMap;
 
 public final class RookieSkills extends JavaPlugin {
 
@@ -45,7 +37,7 @@ public final class RookieSkills extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MythicMobsListener(), this);
         TestMMPapi.registerPlaceholders();
 
-        getServer().getPluginManager().registerEvents(new ItemClickListener(), this);
+        getServer().getPluginManager().registerEvents(new ItemSkillListener(), this);
 
         // 创建异步定时任务
         new BukkitRunnable() {

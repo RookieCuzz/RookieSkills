@@ -1,5 +1,15 @@
 package com.cuzz.rookieskills.bean;
 
 public enum TriggerType {
-    ShootBow,Timer,Attack,RightClick,Damaged,Damaged_By_Entity,Left_Click,Key;
+    SHIFT,
+    RIGHT_CLICK,
+    RIGHT_SHIFT_CLICK,
+    LEFT_CLICK,
+    LEFT_SHIFT_CLICK,
+    ATTACK,
+    DAMAGED,
+    BOW_SHOOT,
+    BOW_HIT,
+    TIMER,
+    KEY
 }

@@ -135,13 +135,12 @@ public class TestCmds implements TabExecutor {
             }
             if (args[0].equalsIgnoreCase("addSkill")) {
 
-                if (args[2] != null) {
+                if (args[1] != null) {
 
                     ItemStack item = player.getInventory().getItemInMainHand();
                     ItemMeta meta = item.getItemMeta();
 
                     if (meta != null) {
-
 
                         com.cuzz.rookieskills.bean.skill.Skill skill = SkillConfigManager.getInstance().getSkillList().get(args[1]);
 
@@ -163,7 +162,7 @@ public class TestCmds implements TabExecutor {
                         PersistentDataContainer skillData = skillInfo.getAdapterContext().newPersistentDataContainer();
 
                         skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING, skill.getName());
-                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillTriggerType"), PersistentDataType.STRING, args[2]);
+                        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING,skill.getId());
                         skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE, skill.getCooldownValue());
                         skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE, skill.getDamageValue());
                         skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE, skill.getManaValue());
@@ -172,8 +171,7 @@ public class TestCmds implements TabExecutor {
                         skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE, skill.getDurationValue());
                         skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE, skill.getTimerValue());
 
-                        skillInfo.set(new NamespacedKey(RookieSkills.getInstance(), skill.getId()), PersistentDataType.TAG_CONTAINER, skillData);
-
+                        skillInfo.set(new NamespacedKey(RookieSkills.getInstance(), args[2]), PersistentDataType.TAG_CONTAINER, skillData);
 
                         // 将子容器再装入主容器
                         skillList.set(skillListKey, PersistentDataType.TAG_CONTAINER, skillInfo);
@@ -184,8 +182,6 @@ public class TestCmds implements TabExecutor {
                         player.sendMessage("添加成功!已为手上物品添加技能: " + args[1] + "触发方式为: " + args[2]);
 
                     }
-                } else {
-                    player.sendMessage("请输入触发方式");
                 }
             }
         }
