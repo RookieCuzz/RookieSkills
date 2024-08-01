@@ -53,31 +53,5 @@ public class Skill {
 
     }
 
-    /**
-     *
-     * @param player 玩家
-     * @return
-     */
-    public boolean isInCoolDown(Player player){
-        //判断是否持有技能
-        if (!isOwner(player)){
-            new Exception("请检查你的设计逻辑,有玩家尝试释放一个他未持有的技能");
-            return true;
-        }else {
-            long l = System.currentTimeMillis();
-            Long coolDownStamp = this.coolDownList.get(player);
-            //玩家还未释放过技能 则未进入冷却
-            if (null==coolDownStamp){
-                return false;
-            }
-            //玩家理论可释放技能的时间为 上次释放的时间+冷却及以上
-            if (l>=coolDownStamp+cooldownValue){
-                return false;
-            }
-            return true;
 
-        }
-
-
-    }
 }

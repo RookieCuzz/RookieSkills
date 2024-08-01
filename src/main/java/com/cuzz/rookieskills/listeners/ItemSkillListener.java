@@ -2,7 +2,9 @@ package com.cuzz.rookieskills.listeners;
 
 import com.cuzz.rookieskills.RookieSkills;
 import com.cuzz.rookieskills.bean.TriggerType;
+import com.cuzz.rookieskills.bean.skill.AbstractSkill;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.bukkit.utils.functions.IFunction;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,13 +60,52 @@ public class ItemSkillListener implements Listener {
 //
 //    }
 
+
+    public void getSkillInfo(){
+
+
+    }
+    public AbstractSkill getSkillByTriggerType(ItemMeta itemMeta,TriggerType triggerType) {
+        AbstractSkill abstractSkill=null;
+        if (null == itemMeta) {
+            return null;
+        }
+        //获取物品PDC
+        PersistentDataContainer PDC = itemMeta.getPersistentDataContainer();
+        //判断PDC数据容器内是否拥有技能
+        if (PDC.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
+            //判断获取技能列表 以触发类型为单位
+            PersistentDataContainer skillList = PDC.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
+            //在技能列表内遍历查找是否该触发类型的技能
+            NamespacedKey namespacedKey = new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase());
+            if (!skillList.has(namespacedKey, PersistentDataType.TAG_CONTAINER)) {
+                return abstractSkill;
+            }else {
+                PersistentDataContainer skillInfo = skillList.get(namespacedKey, PersistentDataType.TAG_CONTAINER);
+                String skillId = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING);
+                String name = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING);
+                Double skillCooldownValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE);
+                Double skillDamageValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE);
+                Double skillManaValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE);
+                Double skillStaminaValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE);
+                Double skillRadiusValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE);
+                Double skillDurationValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE);
+                Double skillTimerValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE);
+
+
+            }
+
+        }
+        return abstractSkill;
+    }
+
+
     /**
      *
      * @param meta 物品元数据
      * @param type  触发类型
      * @return
      */
-
     public Boolean checkItemSkillTriggerType(ItemMeta meta, TriggerType type) {
         if (meta != null) {
             PersistentDataContainer skillList = meta.getPersistentDataContainer();

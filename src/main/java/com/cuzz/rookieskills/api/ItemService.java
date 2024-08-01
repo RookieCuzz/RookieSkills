@@ -1,0 +1,82 @@
+package com.cuzz.rookieskills.api;
+
+import com.cuzz.rookieskills.RookieSkills;
+import com.cuzz.rookieskills.bean.TriggerType;
+import com.cuzz.rookieskills.bean.skill.AbstractSkill;
+import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.util.UUID;
+
+public class ItemService {
+
+    public static ItemStack addSkillData2Item(ItemStack item, ItemSkillData data, TriggerType triggerType) {
+        ItemMeta meta = item.getItemMeta();
+        // 主键
+        NamespacedKey skillListKey = new NamespacedKey(RookieSkills.getInstance(), "skillList");
+
+        // 主容器
+        PersistentDataContainer PDC = meta.getPersistentDataContainer();
+
+        // 子容器
+        PersistentDataContainer skillList;
+        if (PDC.has(skillListKey, PersistentDataType.TAG_CONTAINER)) {
+            skillList = PDC.get(skillListKey, PersistentDataType.TAG_CONTAINER);
+        } else {
+            skillList = PDC.getAdapterContext().newPersistentDataContainer();
+        }
+
+        // 存储技能的信息
+        PersistentDataContainer skillData = skillList.getAdapterContext().newPersistentDataContainer();
+
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING,data.getSkillId());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE, data.getCoolDown());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE, data.getDamage());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE, data.getCostMana());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE, data.getCostStamina());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE, data.getRadius());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE, data.getDuration());
+        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE, data.getTimer());
+
+        skillList.set(new NamespacedKey(RookieSkills.getInstance(), String.valueOf(triggerType)), PersistentDataType.TAG_CONTAINER, skillData);
+
+        // 将子容器再装入主容器
+        skillList.set(skillListKey, PersistentDataType.TAG_CONTAINER, skillList);
+
+        // 将元数据应用回物品
+        item.setItemMeta(meta);
+
+        return item;
+
+    }
+
+    // 为物品添加唯一的 NBT UUID
+    public static void addUUIDToItem(ItemStack item) {
+        // 生成一个新的 UUID
+        UUID uuid = UUID.randomUUID();
+
+        // 获取物品的 ItemMeta
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return;
+
+        // 获取或创建 PersistentDataContainer
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+
+        // 创建 NamespacedKey，用于唯一标识 UUID 标签
+        NamespacedKey key = new NamespacedKey(RookieSkills.getInstance(), "unique_id");
+
+        // 将 UUID 转换为字符串并存储在 PersistentDataContainer 中
+        container.set(key, PersistentDataType.STRING, uuid.toString());
+
+        // 将修改后的 ItemMeta 重新应用到物品上
+        item.setItemMeta(itemMeta);
+    }
+
+    public ItemSkillData getSkillDataFromItem(ItemStack itemStack){
+        return null;
+    }
+}
