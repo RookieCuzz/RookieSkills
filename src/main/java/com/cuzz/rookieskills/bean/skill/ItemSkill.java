@@ -2,6 +2,7 @@ package com.cuzz.rookieskills.bean.skill;
 
 
 import com.cuzz.rookieskills.bean.skill.skilldata.AbstractSkillData;
+import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -13,5 +14,6 @@ public interface ItemSkill {
     public boolean isNotInCoolDown(String uuid, AbstractSkillData data);
     public void setItemCoolDown(String uuid);
 
+    public void castSkill(Player player, ItemSkillData itemSkillData);
     public boolean isSkillAvailable(String uuid, AbstractSkillData data);
 }

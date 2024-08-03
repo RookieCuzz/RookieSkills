@@ -1,10 +1,12 @@
 package com.cuzz.rookieskills.bean.skill.skillimp;
 
+import com.cuzz.rookieskills.RookieSkills;
 import com.cuzz.rookieskills.bean.skill.AbstractSkill;
 import com.cuzz.rookieskills.bean.skill.ItemSkill;
 import com.cuzz.rookieskills.bean.skill.SkillPrototype;
 import com.cuzz.rookieskills.bean.skill.skilldata.AbstractSkillData;
 import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
+import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -60,6 +62,11 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill{
     @Override
     public void setItemCoolDown(String uuid){
         this.coolDownList.put(uuid,System.currentTimeMillis());
+    }
+
+    @Override
+    public void castSkill(Player player, ItemSkillData itemSkillData) {
+        MythicBukkit.inst().getAPIHelper().castSkill(player, itemSkillData.getSkillId());
     }
 
     @Override

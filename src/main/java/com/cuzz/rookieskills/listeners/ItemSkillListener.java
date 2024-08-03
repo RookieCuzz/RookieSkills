@@ -114,7 +114,6 @@ public class ItemSkillListener implements Listener {
             public void run() {
                 if (event.getDamager() instanceof Player) {
                     Player player = (Player) event.getDamager();
-
                     // 头盔
                     if (player.getInventory().getHelmet() != null) {
                         ItemMeta helmetMeta = player.getInventory().getHelmet().getItemMeta();
