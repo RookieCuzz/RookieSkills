@@ -5,7 +5,12 @@ import com.cuzz.rookieskills.RookieSkills;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.entity.Player;
 
+import java.lang.ref.PhantomReference;
+import java.util.HashMap;
+
 public abstract class AbstractSkill {
+
+
     // 技能蓝图（配置模板）
     private SkillPrototype skillPrototype;
 

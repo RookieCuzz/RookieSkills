@@ -29,6 +29,8 @@ public final class RookieSkills extends JavaPlugin {
         instance = this;
         this.rpgPlayerDataManager = RpgPlayerDataManager.getInstance();
         this.skillConfigManager = SkillConfigManager.getInstance();
+        skillConfigManager.loadSkillPrototypes();
+        skillConfigManager.initSkills();
         // Plugin startup logic
         this.getCommand("rsk").setExecutor((CommandExecutor) new TestCmds());
 

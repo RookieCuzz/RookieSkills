@@ -18,12 +18,13 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill{
 
 
 
+
+
     //K代表了某个物品,V代表了物品的技能元数据
     private HashMap<String, ItemSkillData> dataList=new HashMap<>();
 
     //K代表了某个物品, V代表了其上次释放该技能的时间
     private HashMap<String,Long> timeStamp=new HashMap<>();
-
 
 
     public ItemSkillImp(SkillPrototype skillPrototype) {

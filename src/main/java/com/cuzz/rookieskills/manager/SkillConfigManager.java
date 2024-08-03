@@ -3,6 +3,7 @@ package com.cuzz.rookieskills.manager;
 import com.cuzz.rookieskills.RookieSkills;
 import com.cuzz.rookieskills.bean.skill.Skill;
 import com.cuzz.rookieskills.bean.skill.SkillPrototype;
+import com.cuzz.rookieskills.bean.skill.skillimp.ItemSkillImp;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,6 +15,11 @@ public class SkillConfigManager {
 
     @Getter
     private final HashMap<String, Skill> SkillList = new HashMap<>();
+
+
+
+    @Getter
+    private  HashMap<String, ItemSkillImp> skillListX=new HashMap<>();
 
 
     @Getter
@@ -28,6 +34,18 @@ public class SkillConfigManager {
             singleton = new SkillConfigManager();
         }
         return singleton;
+    }
+
+    public void initSkills(){
+        ItemSkillImp itemSkillImp;
+        for (SkillPrototype skillPrototype:skillPrototypeList.values()){
+             itemSkillImp = new ItemSkillImp(skillPrototype);
+            skillListX.put(skillPrototype.getId(),itemSkillImp);
+
+        }
+
+
+
     }
     public void loadSkillPrototypes() {
         File SkillsFolder = new File(RookieSkills.getInstance().getDataFolder(), "Skills");

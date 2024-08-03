@@ -2,6 +2,7 @@ package com.cuzz.rookieskills.api;
 
 import com.cuzz.rookieskills.RookieSkills;
 import com.cuzz.rookieskills.bean.TriggerType;
+import com.cuzz.rookieskills.bean.namespaces.AllNameSpacedKey;
 import com.cuzz.rookieskills.bean.skill.AbstractSkill;
 import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
 import org.bukkit.NamespacedKey;
@@ -33,14 +34,14 @@ public class ItemService {
         // 存储技能的信息
         PersistentDataContainer skillData = skillList.getAdapterContext().newPersistentDataContainer();
 
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING,data.getSkillId());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE, data.getCoolDown());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE, data.getDamage());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE, data.getCostMana());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE, data.getCostStamina());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE, data.getRadius());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE, data.getDuration());
-        skillData.set(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE, data.getTimer());
+        skillData.set(AllNameSpacedKey.skillId, PersistentDataType.STRING,data.getSkillId());
+        skillData.set(AllNameSpacedKey.skillCooldownValue, PersistentDataType.DOUBLE, data.getCoolDown());
+        skillData.set(AllNameSpacedKey.skillDamageValue, PersistentDataType.DOUBLE, data.getDamage());
+        skillData.set(AllNameSpacedKey.skillManaValue, PersistentDataType.DOUBLE, data.getCostMana());
+        skillData.set(AllNameSpacedKey.skillStaminaValue, PersistentDataType.DOUBLE, data.getCostStamina());
+        skillData.set(AllNameSpacedKey.skillRadiusValue, PersistentDataType.DOUBLE, data.getRadius());
+        skillData.set(AllNameSpacedKey.skillDurationValue, PersistentDataType.DOUBLE, data.getDuration());
+        skillData.set(AllNameSpacedKey.skillTimerValue, PersistentDataType.DOUBLE, data.getTimer());
 
         skillList.set(new NamespacedKey(RookieSkills.getInstance(), String.valueOf(triggerType)), PersistentDataType.TAG_CONTAINER, skillData);
 
@@ -91,11 +92,42 @@ public class ItemService {
             if (!skillList.has(namespacedKey, PersistentDataType.TAG_CONTAINER)) {
                 return null;
             }else {
-                PersistentDataContainer skillData = skillList.get(namespacedKey, PersistentDataType.TAG_CONTAINER);
-                String skillId = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING);
-                Double skillCooldownValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE);
-                //待续
+                PersistentDataContainer itemData = skillList.get(namespacedKey, PersistentDataType.TAG_CONTAINER);
+                ItemSkillData itemSkillData = new ItemSkillData();
+                //必有
+                itemSkillData.setSkillId(itemData.get(AllNameSpacedKey.skillId, PersistentDataType.STRING));
 
+                //伤害数值
+                if (itemData.has(AllNameSpacedKey.skillDamageValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setDamage(itemData.get(AllNameSpacedKey.skillDamageValue,PersistentDataType.DOUBLE));
+                }
+                //冷却
+                if (itemData.has(AllNameSpacedKey.skillCooldownValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setCoolDown(itemData.get(AllNameSpacedKey.skillCooldownValue,PersistentDataType.DOUBLE));
+                }
+                //消耗蓝量
+                if (itemData.has(AllNameSpacedKey.skillManaValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setCostMana(itemData.get(AllNameSpacedKey.skillManaValue,PersistentDataType.DOUBLE));
+                }
+                //消耗体力
+                if (itemData.has(AllNameSpacedKey.skillStaminaValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setCostStamina(itemData.get(AllNameSpacedKey.skillStaminaValue,PersistentDataType.DOUBLE));
+                }
+
+                //范围 例如玩家向后闪现  四格
+                if (itemData.has(AllNameSpacedKey.skillRadiusValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setRadius(itemData.get(AllNameSpacedKey.skillRadiusValue,PersistentDataType.DOUBLE));
+                }
+
+                //持续时间
+                if (itemData.has(AllNameSpacedKey.skillDurationValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setDuration(itemData.get(AllNameSpacedKey.skillDurationValue,PersistentDataType.DOUBLE));
+                }
+                //周期
+                if (itemData.has(AllNameSpacedKey.skillTimerValue,PersistentDataType.DOUBLE)){
+                    itemSkillData.setTimer(itemData.get(AllNameSpacedKey.skillTimerValue,PersistentDataType.DOUBLE));
+                }
+                return itemSkillData;
             }
 
         }
