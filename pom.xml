@@ -51,13 +51,14 @@
 
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>lumine</id>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -89,6 +90,13 @@
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.lumine.mythic.bukkit</groupId>
+            <artifactId>MythicBukkit</artifactId>
+            <version>5.6.2</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/MythicMobs-5.6.2.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
