@@ -112,8 +112,8 @@ public class ItemSkillListener implements Listener {
     public void onItemEquipmentDamaged(EntityDamageByEntityEvent event) {
         new BukkitRunnable() {
             public void run() {
-                if (event.getDamager() instanceof Player) {
-                    Player player = (Player) event.getDamager();
+                if (event.getEntity() instanceof Player) {
+                    Player player = (Player) event.getEntity();
 
                     // 头盔
                     if (player.getInventory().getHelmet() != null) {
