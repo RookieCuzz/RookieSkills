@@ -77,7 +77,7 @@ public class ItemService {
         item.setItemMeta(itemMeta);
     }
 
-    public ItemSkillData getSkillDataByTriggerType(ItemMeta itemMeta,TriggerType triggerType){
+    public static ItemSkillData getSkillDataByTriggerType(ItemMeta itemMeta,TriggerType triggerType){
         if (null == itemMeta) {
             return null;
         }

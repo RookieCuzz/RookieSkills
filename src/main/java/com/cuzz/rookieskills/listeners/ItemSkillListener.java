@@ -1,6 +1,7 @@
 package com.cuzz.rookieskills.listeners;
 
 import com.cuzz.rookieskills.RookieSkills;
+import com.cuzz.rookieskills.api.ItemService;
 import com.cuzz.rookieskills.bean.TriggerType;
 import com.cuzz.rookieskills.bean.skill.AbstractSkill;
 import io.lumine.mythic.bukkit.MythicBukkit;
@@ -10,132 +11,192 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
 public class ItemSkillListener implements Listener {
     @EventHandler
     public void onItemInMainHandClick(PlayerInteractEvent event) {
+        new BukkitRunnable() {
+            public void run() {
+                // 蹲下交互判定
+                if (event.getPlayer().isSneaking() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+                    if (!event.getPlayer().getInventory().getItemInMainHand().getType().isAir()) {
+                        ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
-        // 右键触发
-        if (event.getPlayer().isSneaking() && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+                        if (ItemService.getSkillDataByTriggerType(meta, TriggerType.RIGHT_SHIFT_CLICK) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(meta, event.getPlayer(), TriggerType.RIGHT_SHIFT_CLICK);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+                } else if (event.getPlayer().isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
+                    if (!event.getPlayer().getInventory().getItemInMainHand().getType().isAir()) {
+                        ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
-            ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-
-                if (checkItemSkillTriggerType(meta, TriggerType.RIGHT_SHIFT_CLICK)) {
-                    castItemSkill(meta, event.getPlayer(), TriggerType.RIGHT_SHIFT_CLICK);
+                        if (ItemService.getSkillDataByTriggerType(meta, TriggerType.LEFT_SHIFT_CLICK) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(meta, event.getPlayer(), TriggerType.LEFT_SHIFT_CLICK);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
                 }
 
-        } else if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
+                // 非蹲下交互判定
+                if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                    if (!event.getPlayer().getInventory().getItemInMainHand().getType().isAir()) {
+                        ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
-            if (checkItemSkillTriggerType(meta, TriggerType.RIGHT_CLICK)) {
-                castItemSkill(meta, event.getPlayer(), TriggerType.RIGHT_CLICK);
-            }
-        }
+                        if (ItemService.getSkillDataByTriggerType(meta, TriggerType.RIGHT_CLICK) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(meta, event.getPlayer(), TriggerType.RIGHT_CLICK);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+                } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+                    if (!event.getPlayer().getInventory().getItemInMainHand().getType().isAir()) {
+                        ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
-        // 左键触发
-        if (event.getPlayer().isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-
-            ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-
-            if (checkItemSkillTriggerType(meta, TriggerType.LEFT_SHIFT_CLICK)) {
-                castItemSkill(meta, event.getPlayer(), TriggerType.LEFT_SHIFT_CLICK);
-            }
-
-        } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
-            ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-
-            if (checkItemSkillTriggerType(meta, TriggerType.LEFT_CLICK)) {
-                castItemSkill(meta, event.getPlayer(), TriggerType.LEFT_CLICK);
-            }
-        }
-    }
-
-//    public boolean isCoolDown(Player player,String skillId){
-//
-//    }
-
-
-    public void getSkillInfo(){
-
-
-    }
-    public AbstractSkill getSkillByTriggerType(ItemMeta itemMeta,TriggerType triggerType) {
-        AbstractSkill abstractSkill=null;
-        if (null == itemMeta) {
-            return null;
-        }
-        //获取物品PDC
-        PersistentDataContainer PDC = itemMeta.getPersistentDataContainer();
-        //判断PDC数据容器内是否拥有技能
-        if (PDC.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
-            //判断获取技能列表 以触发类型为单位
-            PersistentDataContainer skillList = PDC.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
-            //在技能列表内遍历查找是否该触发类型的技能
-            NamespacedKey namespacedKey = new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase());
-            if (!skillList.has(namespacedKey, PersistentDataType.TAG_CONTAINER)) {
-                return abstractSkill;
-            }else {
-                PersistentDataContainer skillInfo = skillList.get(namespacedKey, PersistentDataType.TAG_CONTAINER);
-                String skillId = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING);
-                String name = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING);
-                Double skillCooldownValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE);
-                Double skillDamageValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE);
-                Double skillManaValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE);
-                Double skillStaminaValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE);
-                Double skillRadiusValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE);
-                Double skillDurationValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE);
-                Double skillTimerValue = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE);
-
-
-            }
-
-        }
-        return abstractSkill;
-    }
-
-
-    /**
-     *
-     * @param meta 物品元数据
-     * @param type  触发类型
-     * @return
-     */
-    public Boolean checkItemSkillTriggerType(ItemMeta meta, TriggerType type) {
-        if (meta != null) {
-            PersistentDataContainer skillList = meta.getPersistentDataContainer();
-
-            if (skillList.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
-                PersistentDataContainer skillInfo = skillList.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
-
-                for (NamespacedKey key : skillInfo.getKeys()) {
-                    if (key.getKey().equalsIgnoreCase(type.toString())) {
-                        return true;
+                        if (ItemService.getSkillDataByTriggerType(meta, TriggerType.LEFT_CLICK) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(meta, event.getPlayer(), TriggerType.LEFT_CLICK);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
                     }
                 }
             }
-        }
-        return false;
+        }.runTaskAsynchronously(RookieSkills.getInstance());
+    }
+
+    @EventHandler
+    public void onItemInMainHandAttack(EntityDamageByEntityEvent event) {
+        new BukkitRunnable() {
+            public void run() {
+                // 当攻击造成者为玩家
+                if (event.getDamager() instanceof Player) {
+                    Player player = (Player) event.getDamager();
+
+                    if (!player.getInventory().getItemInMainHand().getType().isAir()) {
+                        ItemMeta meta = player.getInventory().getItemInMainHand().getItemMeta();
+
+                        if (ItemService.getSkillDataByTriggerType(meta, TriggerType.ATTACK) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(meta, player, TriggerType.ATTACK);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+                }
+            }
+        }.runTaskAsynchronously(RookieSkills.getInstance());
+    }
+
+    @EventHandler
+    public void onItemEquipmentDamaged(EntityDamageByEntityEvent event) {
+        new BukkitRunnable() {
+            public void run() {
+                if (event.getDamager() instanceof Player) {
+                    Player player = (Player) event.getDamager();
+
+                    // 头盔
+                    if (player.getInventory().getHelmet() != null) {
+                        ItemMeta helmetMeta = player.getInventory().getHelmet().getItemMeta();
+
+                        if (ItemService.getSkillDataByTriggerType(helmetMeta, TriggerType.DAMAGED) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(helmetMeta, player, TriggerType.DAMAGED);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+
+                    // 胸甲
+                    if (player.getInventory().getChestplate() != null) {
+                        ItemMeta chestplateMeta = player.getInventory().getChestplate().getItemMeta();
+
+                        if (ItemService.getSkillDataByTriggerType(chestplateMeta, TriggerType.DAMAGED) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(chestplateMeta, player, TriggerType.DAMAGED);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+
+                    // 裤子
+                    if (player.getInventory().getLeggings() != null) {
+                        ItemMeta leggingsMeta = player.getInventory().getLeggings().getItemMeta();
+
+                        if (ItemService.getSkillDataByTriggerType(leggingsMeta, TriggerType.DAMAGED) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(leggingsMeta, player, TriggerType.DAMAGED);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+
+                    // 鞋子
+                    if (player.getInventory().getBoots() != null) {
+                        ItemMeta bootsMeta = player.getInventory().getBoots().getItemMeta();
+
+                        if (ItemService.getSkillDataByTriggerType(bootsMeta, TriggerType.DAMAGED) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(bootsMeta, player, TriggerType.DAMAGED);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+
+                    // 主手
+                    if (!player.getInventory().getItemInMainHand().getType().isAir()) {
+                        ItemMeta mainHandMeta = player.getInventory().getItemInMainHand().getItemMeta();
+
+                        if (ItemService.getSkillDataByTriggerType(mainHandMeta, TriggerType.DAMAGED) != null) {
+                            new BukkitRunnable() {
+                                public void run() {
+                                    castItemSkill(mainHandMeta, player, TriggerType.DAMAGED);
+                                }
+                            }.runTask(RookieSkills.getInstance());
+                        }
+                    }
+                }
+            }
+        }.runTaskAsynchronously(RookieSkills.getInstance());
     }
 
     public void castItemSkill(ItemMeta meta, Player player, TriggerType triggerType) {
         if (meta != null) {
-            PersistentDataContainer skillList = meta.getPersistentDataContainer();
+            PersistentDataContainer PDC = meta.getPersistentDataContainer();
 
-            if (skillList.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
-                PersistentDataContainer skillInfo = skillList.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
+            if (PDC.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
+                PersistentDataContainer skillInfo = PDC.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
 
                 for (String skillId : new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet())) {
 
                     if (skillInfo.has(new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase()), PersistentDataType.TAG_CONTAINER)) {
                         PersistentDataContainer skillData = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase()), PersistentDataType.TAG_CONTAINER);
 
-                        if (skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"),PersistentDataType.STRING).equalsIgnoreCase(skillId)) {
+                        if (skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING).equalsIgnoreCase(skillId)) {
 
                             MythicBukkit.inst().getAPIHelper().castSkill(player, RookieSkills.getInstance().getSkillConfigManager().getSkillList().get(skillId).getId());
 
