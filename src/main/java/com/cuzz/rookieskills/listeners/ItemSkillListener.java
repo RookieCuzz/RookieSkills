@@ -27,7 +27,8 @@ import java.util.HashMap;
 
 public class ItemSkillListener implements Listener {
 
-    public static HashMap<String ,ItemSkillData> cache=new HashMap<>();
+    public static HashMap<String, ItemSkillData> cache = new HashMap<>();
+
     @EventHandler
     public void onItemInMainHandClick(PlayerInteractEvent event) {
         new BukkitRunnable() {
@@ -41,7 +42,7 @@ public class ItemSkillListener implements Listener {
                             ItemSkillData skillData = ItemService.getSkillDataByTriggerType(meta, TriggerType.RIGHT_SHIFT_CLICK);
                             new BukkitRunnable() {
                                 public void run() {
-                                    ItemSkillImp.getSkillImpl(skillData).castSkill(event.getPlayer(),skillData);
+                                    ItemSkillImp.getSkillImpl(skillData).castSkill(event.getPlayer(), skillData);
                                 }
                             }.runTask(RookieSkills.getInstance());
                         }
@@ -104,7 +105,9 @@ public class ItemSkillListener implements Listener {
                         if (ItemService.getSkillDataByTriggerType(meta, TriggerType.ATTACK) != null) {
                             new BukkitRunnable() {
                                 public void run() {
-                                    castItemSkill(meta, player, TriggerType.ATTACK);
+//                                    castItemSkill(meta, player, TriggerType.ATTACK);
+                                    ItemSkillData itemSkillData = ItemService.getSkillDataByTriggerType(meta, TriggerType.ATTACK);
+                                    ItemSkillImp.getSkillImpl(itemSkillData).castSkill(player, itemSkillData);
                                 }
                             }.runTask(RookieSkills.getInstance());
                         }

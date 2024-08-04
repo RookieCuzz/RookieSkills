@@ -1,6 +1,7 @@
 package com.cuzz.rookieskills.commands;
 
 import com.cuzz.rookieskills.RookieSkills;
+import com.cuzz.rookieskills.api.ItemService;
 import com.cuzz.rookieskills.bean.TriggerType;
 import com.cuzz.rookieskills.manager.SkillConfigManager;
 import com.google.common.collect.ImmutableMap;
@@ -189,6 +190,8 @@ public class TestCmds implements TabExecutor {
 
                         // 将元数据应用回物品
                         item.setItemMeta(meta);
+
+                        ItemService.addUUIDToItem(item);
 
                         player.sendMessage("添加成功!已为手上物品添加技能: " + args[1] + "触发方式为: " + args[2]);
 
