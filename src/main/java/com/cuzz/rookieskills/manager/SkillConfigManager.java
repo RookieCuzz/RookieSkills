@@ -11,6 +11,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.HashMap;
 
+import static com.cuzz.rookieskills.bean.skill.skillimp.ItemSkillImp.skillListX;
+
 public class SkillConfigManager {
 
     @Getter
@@ -18,8 +20,6 @@ public class SkillConfigManager {
 
 
 
-    @Getter
-    private  HashMap<String, ItemSkillImp> skillListX=new HashMap<>();
 
 
     @Getter
@@ -40,7 +40,7 @@ public class SkillConfigManager {
         ItemSkillImp itemSkillImp;
         for (SkillPrototype skillPrototype:skillPrototypeList.values()){
              itemSkillImp = new ItemSkillImp(skillPrototype);
-            skillListX.put(skillPrototype.getId(),itemSkillImp);
+            ItemSkillImp.getSkillListX().put(skillPrototype.getId(),itemSkillImp);
 
         }
 
