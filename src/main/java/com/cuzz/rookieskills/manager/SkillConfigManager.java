@@ -11,16 +11,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.HashMap;
 
-import static com.cuzz.rookieskills.bean.skill.skillimp.ItemSkillImp.skillListX;
 
 public class SkillConfigManager {
 
     @Getter
     private final HashMap<String, Skill> SkillList = new HashMap<>();
-
-
-
-
 
     @Getter
     private final HashMap<String, SkillPrototype> skillPrototypeList = new HashMap<>();
@@ -36,17 +31,17 @@ public class SkillConfigManager {
         return singleton;
     }
 
-    public void initSkills(){
+    public void initSkills() {
         ItemSkillImp itemSkillImp;
-        for (SkillPrototype skillPrototype:skillPrototypeList.values()){
-             itemSkillImp = new ItemSkillImp(skillPrototype);
-            ItemSkillImp.getSkillListX().put(skillPrototype.getId(),itemSkillImp);
+        for (SkillPrototype skillPrototype : skillPrototypeList.values()) {
+            itemSkillImp = new ItemSkillImp(skillPrototype);
+            ItemSkillImp.getSkillListX().put(skillPrototype.getId(), itemSkillImp);
 
         }
 
 
-
     }
+
     public void loadSkillPrototypes() {
         File SkillsFolder = new File(RookieSkills.getInstance().getDataFolder(), "Skills");
 
@@ -84,6 +79,7 @@ public class SkillConfigManager {
             }
         }
     }
+
     public void loadSkills() {
         File SkillsFolder = new File(RookieSkills.getInstance().getDataFolder(), "Skills");
 

@@ -34,7 +34,7 @@ public class ItemService {
         // 存储技能的信息
         PersistentDataContainer skillData = skillList.getAdapterContext().newPersistentDataContainer();
 
-        skillData.set(AllNameSpacedKey.skillId, PersistentDataType.STRING,data.getSkillId());
+        skillData.set(AllNameSpacedKey.skillId, PersistentDataType.STRING, data.getSkillId());
         skillData.set(AllNameSpacedKey.skillCooldownValue, PersistentDataType.DOUBLE, data.getCoolDown());
         skillData.set(AllNameSpacedKey.skillDamageValue, PersistentDataType.DOUBLE, data.getDamage());
         skillData.set(AllNameSpacedKey.skillManaValue, PersistentDataType.DOUBLE, data.getCostMana());
@@ -76,6 +76,7 @@ public class ItemService {
         // 将修改后的 ItemMeta 重新应用到物品上
         item.setItemMeta(itemMeta);
     }
+
     // 为物品添加唯一的 NBT UUID
     public static String getUUIDFromItem(ItemStack item) {
         // 生成一个新的 UUID
@@ -89,13 +90,15 @@ public class ItemService {
 
         // 创建 NamespacedKey，用于唯一标识 UUID 标签
         NamespacedKey key = new NamespacedKey(RookieSkills.getInstance(), "unique_id");
-        if (!container.has(key,PersistentDataType.STRING)){
+        if (!container.has(key, PersistentDataType.STRING)) {
             return null;
         }
         String string = container.get(key, PersistentDataType.STRING);
         return string;
     }
-    public static ItemSkillData getSkillDataByTriggerType(ItemMeta itemMeta,TriggerType triggerType){
+
+    public static ItemSkillData getSkillDataByTriggerType(ItemStack itemStack,TriggerType triggerType){
+        ItemMeta itemMeta = itemStack.getItemMeta();
         if (null == itemMeta) {
             return null;
         }
@@ -145,15 +148,19 @@ public class ItemService {
                 if (itemData.has(AllNameSpacedKey.skillTimerValue,PersistentDataType.DOUBLE)){
                     itemSkillData.setTimer(itemData.get(AllNameSpacedKey.skillTimerValue,PersistentDataType.DOUBLE));
                 }
+                String uuidFromItem = getUUIDFromItem(itemStack);
+                itemSkillData.setUuid(uuidFromItem);
                 return itemSkillData;
             }
 
         }
+
+
         return null;
     }
 
-    public AbstractSkill getSkillByTriggerType(ItemMeta itemMeta,TriggerType triggerType) {
-        AbstractSkill abstractSkill=null;
+    public AbstractSkill getSkillByTriggerType(ItemMeta itemMeta, TriggerType triggerType) {
+        AbstractSkill abstractSkill = null;
         if (null == itemMeta) {
             return null;
         }
@@ -167,7 +174,7 @@ public class ItemService {
             NamespacedKey namespacedKey = new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase());
             if (!skillList.has(namespacedKey, PersistentDataType.TAG_CONTAINER)) {
                 return abstractSkill;
-            }else {
+            } else {
                 PersistentDataContainer skillInfo = skillList.get(namespacedKey, PersistentDataType.TAG_CONTAINER);
                 String skillId = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING);
                 String name = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING);
