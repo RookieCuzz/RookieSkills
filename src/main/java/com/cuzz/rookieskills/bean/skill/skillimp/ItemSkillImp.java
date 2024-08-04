@@ -7,6 +7,7 @@ import com.cuzz.rookieskills.bean.skill.SkillPrototype;
 import com.cuzz.rookieskills.bean.skill.skilldata.AbstractSkillData;
 import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,12 +19,18 @@ import java.util.HashMap;
 //那么每个说相声的人被记录在某个档案中
 public class ItemSkillImp extends AbstractSkill implements ItemSkill{
 
+    public static HashMap<String ,ItemSkillData>  cache=new HashMap<>();
 
 
-
+    @Getter
+    private static HashMap<String, ItemSkillImp> skillListX=new HashMap<>();
 
     //K代表了某个物品,V代表了物品的技能元数据
-    private HashMap<String, ItemSkillData> dataList=new HashMap<>();
+    private HashMap<String, ItemSkillData> dataListMarkByItem=new HashMap<>();
+
+    //K代表了某个玩家,V代表了物品的技能元数据
+    //这个数据结构纯粹为mm技能 的参数变量服务的 查看 TestMMPapi
+    private HashMap<String, ItemSkillData> dataListMarkByPlayer=new HashMap<>();
 
     //K代表了某个物品, V代表了其上次释放该技能的时间
     private HashMap<String,Long> timeStamp=new HashMap<>();
@@ -64,11 +71,16 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill{
         this.coolDownList.put(uuid,System.currentTimeMillis());
     }
 
-    @Override
-    public void castSkill(Player player, ItemSkillData itemSkillData) {
+    public void castSkill(Player player,ItemSkillData itemSkillData) {
+        cache.put(itemSkillData.getUuid(),itemSkillData);
         MythicBukkit.inst().getAPIHelper().castSkill(player, itemSkillData.getSkillId());
     }
 
+    public static ItemSkillImp getSkillImpl(ItemSkillData itemSkillData) {
+        //获取技能实现
+        ItemSkillImp itemSkillImp = skillListX.get(itemSkillData.getSkillId());
+        return itemSkillImp;
+    }
     @Override
     public boolean isSkillAvailable(String uuid,AbstractSkillData skillData) {
         return this.isNotInCoolDown(uuid,skillData);

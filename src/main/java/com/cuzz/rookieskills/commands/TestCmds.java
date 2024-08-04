@@ -5,14 +5,13 @@ import com.cuzz.rookieskills.bean.TriggerType;
 import com.cuzz.rookieskills.manager.SkillConfigManager;
 import com.google.common.collect.ImmutableMap;
 import io.lumine.mythic.api.adapters.AbstractEntity;
+import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.*;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.adapters.BukkitEntity;
 import io.lumine.mythic.bukkit.adapters.BukkitPlayer;
 import io.lumine.mythic.core.players.PlayerData;
-import io.lumine.mythic.core.skills.SkillExecutor;
-import io.lumine.mythic.core.skills.SkillMetadataImpl;
-import io.lumine.mythic.core.skills.SkillTriggers;
+import io.lumine.mythic.core.skills.*;
 import io.lumine.mythic.core.skills.variables.Variable;
 import io.lumine.mythic.core.skills.variables.VariableRegistry;
 import io.lumine.mythic.core.utils.MythicUtil;
@@ -29,6 +28,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,22 +87,16 @@ public class TestCmds implements TabExecutor {
         // 对技能元数据进行转换或处理
         SkillCaster caster = metadata.getCaster();
         Collection<AbstractEntity> entityTargets = metadata.getEntityTargets();
+        try {
+            String name = caster.getName();
+            Map<String, Object> metadata1 = ((SkillMetadataImpl) metadata).getMetadata();
+            Bukkit.getPlayer(name).sendMessage("大小是"+metadata1.size());
+        }catch (Exception e){
+                e.printStackTrace();
 
-        String name = caster.getName();
-        Bukkit.getPlayer(name).sendMessage("BEFORE目标数量" + entityTargets.size());
-        System.out.println("caster是" + name);
-        Collection<AbstractEntity> nearbyIronGolems = findNearbyIronGolems(Bukkit.getPlayer(name), 5);
-        Bukkit.getPlayer(name).sendMessage("铁傀儡数量" + nearbyIronGolems.size());
-        metadata.setEntityTargets(nearbyIronGolems);
-        System.out.println("对技能进行修正");
-        Collection<AbstractEntity> entityTargets2 = metadata.getEntityTargets();
-        Bukkit.getPlayer(name).sendMessage("AFTER目标数量" + entityTargets2.size());
-        VariableRegistry variables = metadata.getVariables();
-        ImmutableMap<String, Variable> map = variables.asMap();
-        System.out.println(variables.asMap().size());
-        for (String str : map.keySet()) {
-            Bukkit.getPlayer(name).sendMessage("key " + str);
         }
+
+
         // 其它操作...
     }
 
@@ -117,16 +111,33 @@ public class TestCmds implements TabExecutor {
             if (args[0].equalsIgnoreCase("test")) {
                 player.sendMessage("进行测试！");
                 final SkillExecutor skillManager = MythicBukkit.inst().getSkillManager();
-                String skillName = "TestSkill";
+                String skillName = "SmashAttack";
                 SkillTrigger skillTrigger = SkillTrigger.get("onUse");
                 PlayerData playerData = new PlayerData();
                 playerData.initialize(new BukkitPlayer(player));
+//                MythicBukkit.inst().getAPIHelper().castSkill((Entity) sender, skillName, this::applySkillTransformation);
+                Optional<Skill> maybeSkill = MythicBukkit.inst().getSkillManager().getSkill(skillName);
+                MetaSkill skill = (MetaSkill)maybeSkill.get();
+                try {
+                    Class<MetaSkill> metaSkillClass = MetaSkill.class;
+                    Field skills = metaSkillClass.getDeclaredField("skills");
+                    skills.setAccessible(true);
+                    LinkedList<SkillMechanic> o = (LinkedList<SkillMechanic>) skills.get(skill);
+                    player.sendMessage("子技能数量为"+o.size());
+                    for (SkillMechanic item:o){
+                        if (item.getTypeName().equalsIgnoreCase("damage")){
+                            player.sendMessage(item.getTypeName());
+                            String configLine = item.getConfigLine();
+                            MythicLineConfig config = item.getConfig();
+                            player.sendMessage("配置为"+ config.getLine());
+                        }
 
-                MythicBukkit.inst().getAPIHelper().castSkill((Entity) sender, skillName, this::applySkillTransformation);
-                Optional<Skill> skill = skillManager.getSkill(skillName);
-                Skill skill1 = skill.get();
+                    }
 
-                Collection<SkillHolder> parents = skill1.getParents();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
             if (args[0].equalsIgnoreCase("Test2")) {
                 player.sendMessage(args[1]);

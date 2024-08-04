@@ -14,6 +14,5 @@ public interface ItemSkill {
     public boolean isNotInCoolDown(String uuid, AbstractSkillData data);
     public void setItemCoolDown(String uuid);
 
-    public void castSkill(Player player, ItemSkillData itemSkillData);
     public boolean isSkillAvailable(String uuid, AbstractSkillData data);
 }

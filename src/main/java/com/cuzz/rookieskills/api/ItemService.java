@@ -76,7 +76,25 @@ public class ItemService {
         // 将修改后的 ItemMeta 重新应用到物品上
         item.setItemMeta(itemMeta);
     }
+    // 为物品添加唯一的 NBT UUID
+    public static String getUUIDFromItem(ItemStack item) {
+        // 生成一个新的 UUID
 
+        // 获取物品的 ItemMeta
+        ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return null;
+
+        // 获取或创建 PersistentDataContainer
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+
+        // 创建 NamespacedKey，用于唯一标识 UUID 标签
+        NamespacedKey key = new NamespacedKey(RookieSkills.getInstance(), "unique_id");
+        if (!container.has(key,PersistentDataType.STRING)){
+            return null;
+        }
+        String string = container.get(key, PersistentDataType.STRING);
+        return string;
+    }
     public static ItemSkillData getSkillDataByTriggerType(ItemMeta itemMeta,TriggerType triggerType){
         if (null == itemMeta) {
             return null;

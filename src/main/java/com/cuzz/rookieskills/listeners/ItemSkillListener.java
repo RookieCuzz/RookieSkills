@@ -4,6 +4,8 @@ import com.cuzz.rookieskills.RookieSkills;
 import com.cuzz.rookieskills.api.ItemService;
 import com.cuzz.rookieskills.bean.TriggerType;
 import com.cuzz.rookieskills.bean.skill.AbstractSkill;
+import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
+import com.cuzz.rookieskills.bean.skill.skillimp.ItemSkillImp;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.utils.functions.IFunction;
 import org.bukkit.NamespacedKey;
@@ -21,8 +23,11 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ItemSkillListener implements Listener {
+
+    public static HashMap<String ,ItemSkillData> cache=new HashMap<>();
     @EventHandler
     public void onItemInMainHandClick(PlayerInteractEvent event) {
         new BukkitRunnable() {
@@ -33,9 +38,10 @@ public class ItemSkillListener implements Listener {
                         ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
                         if (ItemService.getSkillDataByTriggerType(meta, TriggerType.RIGHT_SHIFT_CLICK) != null) {
+                            ItemSkillData skillData = ItemService.getSkillDataByTriggerType(meta, TriggerType.RIGHT_SHIFT_CLICK);
                             new BukkitRunnable() {
                                 public void run() {
-                                    castItemSkill(meta, event.getPlayer(), TriggerType.RIGHT_SHIFT_CLICK);
+                                    ItemSkillImp.getSkillImpl(skillData).castSkill(event.getPlayer(),skillData);
                                 }
                             }.runTask(RookieSkills.getInstance());
                         }
