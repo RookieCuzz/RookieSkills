@@ -5,30 +5,31 @@ import com.cuzz.rookieskills.api.ItemService;
 import com.cuzz.rookieskills.bean.TriggerType;
 import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
 import com.cuzz.rookieskills.bean.skill.skillimp.ItemSkillImp;
-import io.lumine.mythic.bukkit.MythicBukkit;
-import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.ArrayList;
+import pku.yim.magiclibs.magicslotapi.MagicSlotAPI;
+import pku.yim.magiclibs.magicslotapi.event.AsyncSlotUpdateEvent;
+import pku.yim.magiclibs.magicslotapi.event.UpdateTrigger;
+import pku.yim.magiclibs.magicslotapi.slot.PlayerSlot;
+import pku.yim.magiclibs.magicslotapi.slot.impl.VanillaEquipSlot;
 
 public class ItemSkillListener implements Listener {
 
     private static Player player;
-    
+
     @EventHandler
     public void onItemInMainHandClick(PlayerInteractEvent event) {
         player = event.getPlayer();
-        
+
         new BukkitRunnable() {
             public void run() {
                 // 蹲下交互判定
@@ -37,32 +38,14 @@ public class ItemSkillListener implements Listener {
                         ItemStack item = player.getInventory().getItemInMainHand();
 
                         castItemSkillByTriggerType(player, item, TriggerType.RIGHT_SHIFT_CLICK);
-//                        if (ItemService.getSkillDataByTriggerType(item, TriggerType.RIGHT_SHIFT_CLICK) != null) {
-//                            new BukkitRunnable() {
-//                                public void run() {
-//                                    ItemSkillData itemSkillData = ItemService.getSkillDataByTriggerType(item, TriggerType.RIGHT_SHIFT_CLICK);
-//                                    if (itemSkillData != null) {
-//                                        ItemSkillImp.getSkillImpl(itemSkillData).castSkill(player, itemSkillData);
-//                                    }
-//                                }
-//                            }.runTask(RookieSkills.getInstance());
-//                        }
+
                     }
                 } else if (player.isSneaking() && (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
                     if (!player.getInventory().getItemInMainHand().getType().isAir()) {
                         ItemStack item = player.getInventory().getItemInMainHand();
 
                         castItemSkillByTriggerType(player, item, TriggerType.LEFT_SHIFT_CLICK);
-//                        if (ItemService.getSkillDataByTriggerType(item, TriggerType.LEFT_SHIFT_CLICK) != null) {
-//                            new BukkitRunnable() {
-//                                public void run() {
-//                                    ItemSkillData itemSkillData = ItemService.getSkillDataByTriggerType(item, TriggerType.LEFT_SHIFT_CLICK);
-//                                    if (itemSkillData != null) {
-//                                        ItemSkillImp.getSkillImpl(itemSkillData).castSkill(player, itemSkillData);
-//                                    }
-//                                }
-//                            }.runTask(RookieSkills.getInstance());
-//                        }
+
                     }
                 }
 
@@ -72,33 +55,14 @@ public class ItemSkillListener implements Listener {
                         ItemStack item = player.getInventory().getItemInMainHand();
 
                         castItemSkillByTriggerType(player, item, TriggerType.RIGHT_CLICK);
-//                        if (ItemService.getSkillDataByTriggerType(item, TriggerType.RIGHT_CLICK) != null) {
-//                            new BukkitRunnable() {
-//                                public void run() {
-//                                    ItemSkillData itemSkillData = ItemService.getSkillDataByTriggerType(item, TriggerType.RIGHT_CLICK);
-//                                    if (itemSkillData != null) {
-//                                        ItemSkillImp.getSkillImpl(itemSkillData).castSkill(player, itemSkillData);
-//                                    }
-//                                }
-//                            }.runTask(RookieSkills.getInstance());
-//                        }
+
                     }
                 } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
                     if (!player.getInventory().getItemInMainHand().getType().isAir()) {
                         ItemStack item = player.getInventory().getItemInMainHand();
 
-
                         castItemSkillByTriggerType(player, item, TriggerType.LEFT_CLICK);
-//                        if (ItemService.getSkillDataByTriggerType(item, TriggerType.LEFT_CLICK) != null) {
-//                            new BukkitRunnable() {
-//                                public void run() {
-//                                    ItemSkillData itemSkillData = ItemService.getSkillDataByTriggerType(item, TriggerType.LEFT_CLICK);
-//                                    if (itemSkillData != null) {
-//                                        ItemSkillImp.getSkillImpl(itemSkillData).castSkill(player, itemSkillData);
-//                                    }
-//                                }
-//                            }.runTask(RookieSkills.getInstance());
-//                        }
+
                     }
                 }
             }
@@ -116,19 +80,8 @@ public class ItemSkillListener implements Listener {
                     if (!player.getInventory().getItemInMainHand().getType().isAir()) {
                         ItemStack item = player.getInventory().getItemInMainHand();
 
-
                         castItemSkillByTriggerType(player, item, TriggerType.ATTACK);
-                        
-//                        if (ItemService.getSkillDataByTriggerType(item, TriggerType.ATTACK) != null) {
-//                            new BukkitRunnable() {
-//                                public void run() {
-//                                    ItemSkillData itemSkillData = ItemService.getSkillDataByTriggerType(item, TriggerType.ATTACK);
-//                                    if (itemSkillData != null) {
-//                                        ItemSkillImp.getSkillImpl(itemSkillData).castSkill(player, itemSkillData);
-//                                    }
-//                                }
-//                            }.runTask(RookieSkills.getInstance());
-//                        }
+
                     }
                 }
             }
@@ -146,6 +99,7 @@ public class ItemSkillListener implements Listener {
                         ItemStack helmetItem = player.getInventory().getHelmet();
 
                         castItemSkillByTriggerType(player, helmetItem, TriggerType.DAMAGED);
+
                     }
 
                     // 胸甲
@@ -153,6 +107,7 @@ public class ItemSkillListener implements Listener {
                         ItemStack chestplateItem = player.getInventory().getChestplate();
 
                         castItemSkillByTriggerType(player, chestplateItem, TriggerType.DAMAGED);
+
                     }
 
                     // 裤子
@@ -160,6 +115,7 @@ public class ItemSkillListener implements Listener {
                         ItemStack leggingsItem = player.getInventory().getLeggings();
 
                         castItemSkillByTriggerType(player, leggingsItem, TriggerType.DAMAGED);
+
                     }
 
                     // 鞋子
@@ -167,13 +123,54 @@ public class ItemSkillListener implements Listener {
                         ItemStack bootsItem = player.getInventory().getBoots();
 
                         castItemSkillByTriggerType(player, bootsItem, TriggerType.DAMAGED);
+
                     }
 
                     // 主手
                     if (!player.getInventory().getItemInMainHand().getType().isAir()) {
                         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
 
-                        castItemSkillByTriggerType(player, mainHandItem, TriggerType.DAMAGED);
+                        if (!isArmour(mainHandItem)) {
+                            castItemSkillByTriggerType(player, mainHandItem, TriggerType.DAMAGED);
+                        }
+                    }
+                }
+            }
+        }.runTaskAsynchronously(RookieSkills.getInstance());
+    }
+
+    @EventHandler
+    public void onArrowShoot(ProjectileLaunchEvent event) {
+        new BukkitRunnable() {
+            public void run() {
+                if (event.getEntity() instanceof Arrow) {
+                    Arrow arrow = (Arrow) event.getEntity();
+
+                    if (arrow.getShooter() instanceof Player) {
+                        player = (Player) arrow.getShooter();
+                        ItemStack item = player.getInventory().getItemInMainHand();
+
+                        castItemSkillByTriggerType(player, item, TriggerType.BOW_SHOOT);
+
+                    }
+                }
+            }
+        }.runTaskAsynchronously(RookieSkills.getInstance());
+    }
+
+    @EventHandler
+    public void onArrowHit(EntityDamageByEntityEvent event) {
+        new BukkitRunnable() {
+            public void run() {
+                if (event.getDamager() instanceof Arrow) {
+                    Arrow arrow = (Arrow) event.getDamager();
+
+                    if (arrow.getShooter() instanceof Player) {
+                        player = (Player) arrow.getShooter();
+                        ItemStack item = player.getInventory().getItemInMainHand();
+
+                        castItemSkillByTriggerType(player, item, TriggerType.BOW_HIT);
+
                     }
                 }
             }
@@ -193,43 +190,42 @@ public class ItemSkillListener implements Listener {
         }
     }
 
-    public void castItemSkill(ItemMeta meta, Player player, TriggerType triggerType) {
-        if (meta != null) {
-            PersistentDataContainer PDC = meta.getPersistentDataContainer();
+    static boolean isArmour(ItemStack item) {
+        if (item == null) {
+            return false;
+        }
 
-            if (PDC.has(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER)) {
-                PersistentDataContainer skillInfo = PDC.get(new NamespacedKey(RookieSkills.getInstance(), "skillList"), PersistentDataType.TAG_CONTAINER);
-
-                for (String skillId : new ArrayList<>(RookieSkills.getInstance().getSkillConfigManager().getSkillList().keySet())) {
-
-                    if (skillInfo.has(new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase()), PersistentDataType.TAG_CONTAINER)) {
-                        PersistentDataContainer skillData = skillInfo.get(new NamespacedKey(RookieSkills.getInstance(), triggerType.toString().toLowerCase()), PersistentDataType.TAG_CONTAINER);
-
-                        if (skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillId"), PersistentDataType.STRING).equalsIgnoreCase(skillId)) {
-
-                            MythicBukkit.inst().getAPIHelper().castSkill(player, RookieSkills.getInstance().getSkillConfigManager().getSkillList().get(skillId).getId());
-
-                            String name = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillName"), PersistentDataType.STRING);
-                            Double skillCooldownValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillCooldownValue"), PersistentDataType.DOUBLE);
-                            Double skillDamageValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillDamageValue"), PersistentDataType.DOUBLE);
-                            Double skillManaValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillManaValue"), PersistentDataType.DOUBLE);
-                            Double skillStaminaValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillStaminaValue"), PersistentDataType.DOUBLE);
-                            Double skillRadiusValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillRadiusValue"), PersistentDataType.DOUBLE);
-                            Double skillDurationValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillDurationValue"), PersistentDataType.DOUBLE);
-                            Double skillTimerValue = skillData.get(new NamespacedKey(RookieSkills.getInstance(), "skillTimerValue"), PersistentDataType.DOUBLE);
-
-                            player.sendMessage("释放的技能名字为: " + name);
-                            player.sendMessage("技能的冷却为: " + skillCooldownValue);
-                            player.sendMessage("技能的伤害为: " + skillDamageValue);
-                            player.sendMessage("技能的耗蓝为: " + skillManaValue);
-                            player.sendMessage("技能的耗体为: " + skillStaminaValue);
-                            player.sendMessage("技能的范围为: " + skillRadiusValue);
-                            player.sendMessage("技能的持续时间为: " + skillDurationValue);
-                            player.sendMessage("技能的循环触发为: " + skillTimerValue);
-                        }
-                    }
-                }
-            }
+        switch (item.getType()) {
+            case LEATHER_HELMET:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+            case CHAINMAIL_HELMET:
+            case CHAINMAIL_CHESTPLATE:
+            case CHAINMAIL_LEGGINGS:
+            case CHAINMAIL_BOOTS:
+            case IRON_HELMET:
+            case IRON_CHESTPLATE:
+            case IRON_LEGGINGS:
+            case IRON_BOOTS:
+            case GOLDEN_HELMET:
+            case GOLDEN_CHESTPLATE:
+            case GOLDEN_LEGGINGS:
+            case GOLDEN_BOOTS:
+            case DIAMOND_HELMET:
+            case DIAMOND_CHESTPLATE:
+            case DIAMOND_LEGGINGS:
+            case DIAMOND_BOOTS:
+            case NETHERITE_HELMET:
+            case NETHERITE_CHESTPLATE:
+            case NETHERITE_LEGGINGS:
+            case NETHERITE_BOOTS:
+            case TURTLE_HELMET:
+            case ELYTRA:
+                return true;
+            default:
+                return false;
         }
     }
+
 }
