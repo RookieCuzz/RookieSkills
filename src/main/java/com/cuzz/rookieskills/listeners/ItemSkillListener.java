@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import pku.yim.magiclibs.magicslotapi.MagicSlotAPI;
@@ -25,6 +26,52 @@ import pku.yim.magiclibs.magicslotapi.slot.impl.VanillaEquipSlot;
 public class ItemSkillListener implements Listener {
 
     private static Player player;
+
+    @EventHandler
+    public void onSneak(PlayerToggleSneakEvent event) {
+        new BukkitRunnable() {
+            public void run() {
+                player = event.getPlayer();
+
+                // 头盔
+                if (player.getInventory().getHelmet() != null) {
+                    ItemStack helmetItem = player.getInventory().getHelmet();
+
+                    castItemSkillByTriggerType(player, helmetItem, TriggerType.SHIFT);
+                }
+
+                // 胸甲
+                if (player.getInventory().getChestplate() != null) {
+                    ItemStack chestplateItem = player.getInventory().getChestplate();
+
+                    castItemSkillByTriggerType(player, chestplateItem, TriggerType.SHIFT);
+                }
+
+                // 裤子
+                if (player.getInventory().getLeggings() != null) {
+                    ItemStack leggingsItem = player.getInventory().getLeggings();
+
+                    castItemSkillByTriggerType(player, leggingsItem, TriggerType.SHIFT);
+                }
+
+                // 鞋子
+                if (player.getInventory().getBoots() != null) {
+                    ItemStack bootsItem = player.getInventory().getBoots();
+
+                    castItemSkillByTriggerType(player, bootsItem, TriggerType.SHIFT);
+                }
+
+                // 主手
+                if (!player.getInventory().getItemInMainHand().getType().isAir()) {
+                    ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+
+                    if (!isArmour(mainHandItem)) {
+                        castItemSkillByTriggerType(player, mainHandItem, TriggerType.SHIFT);
+                    }
+                }
+            }
+        }.runTaskAsynchronously(RookieSkills.getInstance());
+    }
 
     @EventHandler
     public void onItemInMainHandClick(PlayerInteractEvent event) {

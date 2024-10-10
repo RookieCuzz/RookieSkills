@@ -1,6 +1,7 @@
 package com.cuzz.rookieskills.bean;
 
 public enum TriggerType {
+    SHIFT,
     RIGHT_CLICK,
     RIGHT_SHIFT_CLICK,
     LEFT_CLICK,
