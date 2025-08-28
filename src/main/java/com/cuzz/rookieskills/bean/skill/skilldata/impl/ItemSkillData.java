@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ItemSkillData extends AbstractSkillData {
-    //持有改数据的物品uuid
+    //持有该数据的物品uuid
     private String uuid;
 }

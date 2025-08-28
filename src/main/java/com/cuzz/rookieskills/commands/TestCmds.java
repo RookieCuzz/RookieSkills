@@ -56,33 +56,6 @@ public class TestCmds implements TabExecutor {
         }
     }
 
-    private IronGolem findNearestIronGolem(Player player) {
-        double closestDistance = Double.MAX_VALUE;
-        IronGolem closestGolem = null;
-
-        for (Entity entity : player.getNearbyEntities(20, 20, 20)) {
-            if (entity.getType() == EntityType.IRON_GOLEM) {
-                double distance = player.getLocation().distance(entity.getLocation());
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestGolem = (IronGolem) entity;
-                }
-            }
-        }
-
-        return closestGolem;
-    }
-
-    private Collection<AbstractEntity> findNearbyIronGolems(Player player, int radius) {
-        Collection<AbstractEntity> golems = new ArrayList<>();
-
-        for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
-            if (entity.getType() == EntityType.IRON_GOLEM) {
-                golems.add(new BukkitEntity(entity));
-            }
-        }
-        return golems;
-    }
 
     public void applySkillTransformation(SkillMetadata metadata) {
         // 对技能元数据进行转换或处理
@@ -100,6 +73,8 @@ public class TestCmds implements TabExecutor {
 
         // 其它操作...
     }
+
+
 
 
     @Override

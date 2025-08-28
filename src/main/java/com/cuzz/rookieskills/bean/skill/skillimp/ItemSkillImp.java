@@ -6,9 +6,10 @@ import com.cuzz.rookieskills.bean.skill.SkillPrototype;
 import com.cuzz.rookieskills.bean.skill.skilldata.AbstractSkillData;
 import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
 import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythiccrucible.MythicCrucible;
 import lombok.Getter;
 import org.bukkit.entity.Player;
-
+import io.lumine.mythiccrucible.profiles.*;
 import java.util.HashMap;
 
 
@@ -38,11 +39,11 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill {
     public boolean isNotInCoolDown(String uuid, AbstractSkillData itemSkillData) {
 
         //冷却记录表未发现此物品
-        if (!this.coolDownList.keySet().contains(uuid)) {
+        if (!CoolDownList.keySet().contains(uuid)) {
             return true;
         }
 
-        Long lastStamp = this.coolDownList.get(uuid);
+        Long lastStamp = CoolDownList.get(uuid);
 
         if (null == lastStamp) {
             return true;
@@ -61,24 +62,29 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill {
 
     @Override
     public void setItemCoolDown(String uuid) {
-        this.coolDownList.put(uuid, System.currentTimeMillis());
+        CoolDownList.put(uuid, System.currentTimeMillis());
     }
 
     public void castSkill(Player player, ItemSkillData itemSkillData) {
         String uuid = itemSkillData.getUuid();
         if (!isNotInCoolDown(uuid, itemSkillData)) {
-            double cooldownTimeLeft = itemSkillData.getCoolDown() - (System.currentTimeMillis() - this.coolDownList.get(uuid)) / 1000.0D;
+            double cooldownTimeLeft = itemSkillData.getCoolDown() - (System.currentTimeMillis() - CoolDownList.get(uuid)) / 1000.0D;
 
             player.sendMessage("当前技能正在冷却中! 剩余" + String.format("%.2f", cooldownTimeLeft) + "秒");
             return;
         }
 
         cache.put(uuid, itemSkillData);
+
+        final Profile gs = this.getProfile(player);
+
         MythicBukkit.inst().getAPIHelper().castSkill(player, itemSkillData.getSkillId());
 
-        this.coolDownList.put(uuid, System.currentTimeMillis());
+        CoolDownList.put(uuid, System.currentTimeMillis());
     }
-
+    private Profile getProfile(final Player player) {
+        return MythicCrucible.inst().getProfileManager().getPlayerProfile(player);
+    }
     public static ItemSkillImp getSkillImpl(ItemSkillData itemSkillData) {
         //获取技能实现
         ItemSkillImp itemSkillImp = skillListX.get(itemSkillData.getSkillId());

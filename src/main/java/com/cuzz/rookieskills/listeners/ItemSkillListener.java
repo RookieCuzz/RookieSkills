@@ -17,11 +17,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import pku.yim.magiclibs.magicslotapi.MagicSlotAPI;
-import pku.yim.magiclibs.magicslotapi.event.AsyncSlotUpdateEvent;
-import pku.yim.magiclibs.magicslotapi.event.UpdateTrigger;
-import pku.yim.magiclibs.magicslotapi.slot.PlayerSlot;
-import pku.yim.magiclibs.magicslotapi.slot.impl.VanillaEquipSlot;
 
 public class ItemSkillListener implements Listener {
 

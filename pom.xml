@@ -99,11 +99,19 @@
             <systemPath>${basedir}/libs/MythicMobs-5.6.2.jar</systemPath>
         </dependency>
         <dependency>
-            <groupId>com.github.playerslotapi</groupId>
-            <artifactId>PlayerSlotAPI</artifactId>
-            <version>1.0</version>
+            <groupId>io.lumine.mythic.bukkit</groupId>
+            <artifactId>MMC</artifactId>
+            <version>5.6.2</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/PlayerSlotAPI-1.0-Release.jar</systemPath>
+            <systemPath>${basedir}/libs/MythicCrucible-2.2.0-SNAPSHOT 3981 .jar</systemPath>
         </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.github.playerslotapi</groupId>-->
+<!--            <artifactId>PlayerSlotAPI</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${basedir}/libs/PlayerSlotAPI-1.0-Release.jar</systemPath>-->
+<!--        </dependency>-->
     </dependencies>
 </project>
