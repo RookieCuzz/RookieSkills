@@ -100,10 +100,10 @@
         </dependency>
         <dependency>
             <groupId>io.lumine.mythic.bukkit</groupId>
-            <artifactId>MMC</artifactId>
+            <artifactId>MMOLIB</artifactId>
             <version>5.6.2</version>
             <scope>system</scope>
-            <systemPath>${basedir}/libs/MythicCrucible-2.2.0-SNAPSHOT 3981 .jar</systemPath>
+            <systemPath>${basedir}/libs/MythicLib-dist-1.7.1-20250819.162959-33.jar</systemPath>
         </dependency>
 
 <!--        <dependency>-->

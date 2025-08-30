@@ -2,6 +2,9 @@ name: RookieSkills
 version: '${project.version}'
 main: com.cuzz.rookieskills.RookieSkills
 api-version: '1.20'
+depend:
+  - MythicLib
+  - MythicMobs
 commands:
   rsk:
     description: cuzz
