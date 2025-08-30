@@ -5,11 +5,14 @@ import com.cuzz.rookieskills.bean.skill.ItemSkill;
 import com.cuzz.rookieskills.bean.skill.SkillPrototype;
 import com.cuzz.rookieskills.bean.skill.skilldata.AbstractSkillData;
 import com.cuzz.rookieskills.bean.skill.skilldata.impl.ItemSkillData;
-import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythiccrucible.MythicCrucible;
+import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.api.player.MMOPlayerData;
+import io.lumine.mythic.lib.skill.SimpleSkill;
+import io.lumine.mythic.lib.skill.handler.SkillHandler;
+import io.lumine.mythic.lib.skill.result.SkillResult;
+import io.lumine.mythic.lib.skill.trigger.TriggerType;
 import lombok.Getter;
 import org.bukkit.entity.Player;
-import io.lumine.mythiccrucible.profiles.*;
 import java.util.HashMap;
 
 
@@ -65,6 +68,36 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill {
         CoolDownList.put(uuid, System.currentTimeMillis());
     }
 
+
+    /**
+     * 方法1: 通过技能ID直接释放技能（推荐方式 - 使用Skill.cast()）
+     *
+     * @param player 释放技能的玩家
+     * @param skillId 技能ID（如"FIREBALL"、"HEAL"等）
+     */
+    public static void castSkillById(Player player, String skillId) {
+        try {
+            // 获取玩家数据
+            MMOPlayerData playerData = MMOPlayerData.get(player);
+
+            // 通过技能ID获取技能处理器
+            SkillHandler<?> handler = MythicLib.plugin.getSkills().getHandlerOrThrow(skillId.toUpperCase().replace("-", "_"));
+
+            // 创建简单技能并释放
+            SimpleSkill skill = new SimpleSkill(handler);
+            SkillResult result = skill.cast(playerData, TriggerType.CAST);
+
+            if (result.isSuccessful()) {
+                player.sendMessage("技能 " + skillId + " 释放成功！");
+            } else {
+                player.sendMessage("技能 " + skillId + " 释放失败！");
+            }
+
+        } catch (Exception e) {
+            player.sendMessage("找不到技能: " + skillId);
+            e.printStackTrace();
+        }
+    }
     public void castSkill(Player player, ItemSkillData itemSkillData) {
         String uuid = itemSkillData.getUuid();
         if (!isNotInCoolDown(uuid, itemSkillData)) {
@@ -75,16 +108,14 @@ public class ItemSkillImp extends AbstractSkill implements ItemSkill {
         }
 
         cache.put(uuid, itemSkillData);
+        castSkillById(player, itemSkillData.getSkillId());
 
-        final Profile gs = this.getProfile(player);
 
-        MythicBukkit.inst().getAPIHelper().castSkill(player, itemSkillData.getSkillId());
+//        MythicBukkit.inst().getAPIHelper().castSkill(player, itemSkillData.getSkillId());
 
         CoolDownList.put(uuid, System.currentTimeMillis());
     }
-    private Profile getProfile(final Player player) {
-        return MythicCrucible.inst().getProfileManager().getPlayerProfile(player);
-    }
+
     public static ItemSkillImp getSkillImpl(ItemSkillData itemSkillData) {
         //获取技能实现
         ItemSkillImp itemSkillImp = skillListX.get(itemSkillData.getSkillId());
