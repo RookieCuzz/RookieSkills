@@ -4,12 +4,19 @@ import com.cuzz.rookieskills.RookieSkills;
 import com.cuzz.rookieskills.bean.skill.Skill;
 import com.cuzz.rookieskills.bean.skill.SkillPrototype;
 import com.cuzz.rookieskills.bean.skill.skillimp.ItemSkillImp;
+import io.lumine.mythic.lib.MythicLib;
+import io.lumine.mythic.lib.manager.SkillManager;
 import lombok.Getter;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class SkillConfigManager {
@@ -41,6 +48,41 @@ public class SkillConfigManager {
 
 
     }
+    public void registerMMOlibSkill(FileConfiguration skillConfig){
+
+        ConfigurationSection configurationSection = convertToMythicLibFormat(skillConfig);
+        SkillManager skillManager = MythicLib.plugin.getSkills();
+
+        skillManager.registerSkillHandler(skillManager.loadSkillHandler(configurationSection));
+        System.out.println("加载技能: "+skillConfig.getString("name"));
+    }
+
+    public static ConfigurationSection convertToMythicLibFormat(ConfigurationSection thirdPartyConfig) {
+        String skillName = thirdPartyConfig.getString("name");
+        String skillId   = thirdPartyConfig.getString("id");
+        if (skillName == null || skillName.isEmpty())
+            throw new IllegalArgumentException("skill name missing");
+        if (skillId == null || skillId.isEmpty())
+            throw new IllegalArgumentException("skill id missing");
+
+        YamlConfiguration root = new YamlConfiguration();
+        YamlConfiguration section = new YamlConfiguration();
+        section.set("mythicmobs-skill-id", skillId);
+
+        ConfigurationSection modifierSection = thirdPartyConfig.getConfigurationSection("modifier");
+        if (modifierSection != null) {
+//            List<String> modifiers = new ArrayList<>(modifierSection.getKeys(false));
+            List<String> modifiers = new ArrayList<>();
+            modifiers.add("cooldown");
+            modifiers.add("damage");
+            section.set("modifiers", modifiers);
+            // 如需默认值，可在这里把每个 modifier 的默认值也 set 到同一层：
+            // for (String k : modifiers) section.set(k, modifierSection.get(k + ".value"));
+        }
+
+        root.set(skillName, section);
+        return root.getConfigurationSection(skillName); // <-- 返回“技能名那一层”！
+    }
 
     public void loadSkillPrototypes() {
         File SkillsFolder = new File(RookieSkills.getInstance().getDataFolder(), "Skills");
@@ -55,6 +97,14 @@ public class SkillConfigManager {
 
             for (File skillsFile : SkillsFiles) {
                 FileConfiguration skillConfig = YamlConfiguration.loadConfiguration(skillsFile);
+                try {
+                    registerMMOlibSkill(skillConfig);
+                }catch (Exception exception){
+                    exception.printStackTrace();
+                    System.out.println("A skill handler with the same name already exists"+skillConfig.getString("name"));
+                    continue;
+                }
+
                 SkillPrototype skillPrototype = SkillPrototype.builder()
                         .name(skillConfig.getString("name"))
                         .id(skillConfig.getString("id"))
@@ -78,6 +128,11 @@ public class SkillConfigManager {
                 skillPrototypeList.put(skillConfig.getString("id"), skillPrototype);
             }
         }
+
+        SkillManager skillManager = MythicLib.plugin.getSkills();
+        skillManager.getHandlers().stream().forEach( item->{
+            System.out.println(item.getId());
+        });
     }
 
     public void loadSkills() {
